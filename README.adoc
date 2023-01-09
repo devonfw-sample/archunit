@@ -1,0 +1,3 @@
+# archunit
+
+Template of devonfw Java architecture validation with https://www.archunit.org/[ArchUnit] and demonstration via sample application.
