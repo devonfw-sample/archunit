@@ -1,3 +1,5 @@
-# archunit
+= archunit
+
+image:https://github.com/devonfw-sample/archunit/.github/workflows/build.yml/badge.svg["Build Status",link="https://github.com/devonfw-sample/archunit/.github/workflows/build.yml"]
 
 Template of https://github.com/devonfw/java/blob/main/modules/ROOT/pages/architecture/layered_architecture.adoc[devonfw Java architecture] validation with https://www.archunit.org/[ArchUnit] and demonstration via sample application.
