@@ -15,15 +15,7 @@ public class ComponentRulesTest {
 
   @ArchTest
   private static final ArchRule DevonArchitectureComponentDeclarationCheck = //
-      layeredArchitecture().consideringAllDependencies() //
-          .layer("common").definedBy("..common..") //
-          .layer("logic").definedBy("..logic..") //
-          .layer("dataaccess").definedBy("..dataaccess..") //
-          .layer("service").definedBy("..service..") //
-          .layer("batch").definedBy("..batch..") //
-          .layer("ui").definedBy("..ui..") //
-          // TODO
-          .because("Dependency of technical layers violates architecture rules.");
+      layeredArchitecture().consideringAllDependencies().;
 
   @ArchTest
   private static final ArchRule DevonArchitectureComponentDependencyCheck = //
@@ -39,7 +31,7 @@ public class ComponentRulesTest {
   
   @ArchTest
   private static final ArchRule DevonArchitectureLayerService2Service4ComponentCheck = //
-      layeredArchitecture().consideringAllDependencies().;
+      components();
 
   @ArchTest
   private static final ArchRule DevonArchitectureLayerService2Logic4ComponentCheck = //
