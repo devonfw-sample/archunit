@@ -39,7 +39,7 @@ public class ComponentRulesTest {
   
   @ArchTest
   private static final ArchRule DevonArchitectureLayerService2Service4ComponentCheck = //
-      layeredArchitecture();
+      layeredArchitecture().consideringAllDependencies().;
 
   @ArchTest
   private static final ArchRule DevonArchitectureLayerService2Logic4ComponentCheck = //
