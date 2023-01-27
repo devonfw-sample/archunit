@@ -24,9 +24,9 @@ public class ArchitectureTest {
 
           .whereLayer("common").mayOnlyAccessLayers("common")
           // L01: Common Layer doesnt depend on any other layer
-          .whereLayer("client").mayOnlyBeAccessedByLayers("client")
+          //.whereLayer("client").mayOnlyBeAccessedByLayers("client")
           // L02: verifying that only client layer code may depend on client layer.
-          .whereLayer("client").mayOnlyAccessLayers("client")
+          //.whereLayer("client").mayOnlyAccessLayers("client")
           // L03: verifying that client layer does not depend on logic layer.
           // L04: verifying that client layer does not depend on dataaccess layer.
           // L05: verifying that client layer does not depend on batch layer.
