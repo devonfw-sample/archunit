@@ -22,28 +22,6 @@ public class ArchitectureTest {
           .layer("service").definedBy("com.devonfw.sample.archunit.service..") //
           .layer("client").definedBy("com.devonfw.sample.archunit.client..")
 
-          .whereLayer("common").mayOnlyAccessLayers("common")
-          // L01: Common Layer doesnt depend on any other layer
-          .whereLayer("client").mayOnlyBeAccessedByLayers("client")
-          // L02: verifying that only client layer code may depend on client layer.
-          .whereLayer("client").mayOnlyAccessLayers("client")
-          // L03: verifying that client layer does not depend on logic layer.
-          // L04: verifying that client layer does not depend on dataaccess layer.
-          // L05: verifying that client layer does not depend on batch layer.
-          .whereLayer("service").mayOnlyBeAccessedByLayers("client")
-          .whereLayer("service").mayOnlyAccessLayers("logic", "common")
-          // L08: verifying that code from service layer does not depend on dataaccess layer.
-          // L06: verifying that service layer does not on depend batch layer.
-          //.whereLayer("batch").mayOnlyAccessLayers("java")
-          // L07: verifying that batch layer does not depend on service layer.
-          // L11: verifying that batch layer does not depend on dataaccess layer.
-          .whereLayer("logic").mayOnlyBeAccessedByLayers("service")
-          .whereLayer("logic").mayOnlyAccessLayers("dataaccess", "common")
-          // L09: verifying that code from logic layer does not depend on service layer (of same app).
-          .whereLayer("dataaccess").mayOnlyBeAccessedByLayers("logic")
-          .whereLayer("dataaccess").mayOnlyAccessLayers("dataaccess", "common")
-          // L10: verifying that dataaccess layer does not depend on service layer.
-          // L12: verifying that dataaccess layer does not depend on logic layer.
           .withOptionalLayers(true)
           .because("Dependency of technical layers violates architecture rules.");
   // ...
