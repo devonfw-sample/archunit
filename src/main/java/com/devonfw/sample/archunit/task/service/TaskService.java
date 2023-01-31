@@ -133,7 +133,4 @@ public class TaskService {
     this.ucDeleteTaskItem.delete(id);
   }
 
-  public String thisMethodIsUsedToViolateTheAccessOfItFromLogicLayer() {
-    return "Hello from Service";
-  }
 }

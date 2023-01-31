@@ -8,9 +8,7 @@ public class SampleTaskImport {
 
         if ( args == null || args.length< 3 )
         {
-            System.err.println("Container id as first argument required");
-            System.err.println("Filename as second argument required");
-            System.err.println("Username as third argument required");
+            System.err.println("Container id as first, dumpfilename as second and postgre-username as third argument required");
             System.exit(1);
         }
         String containerId = args[0];

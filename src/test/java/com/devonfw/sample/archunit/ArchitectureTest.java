@@ -16,13 +16,21 @@ public class ArchitectureTest {
   @ArchTest
   private static final ArchRule shouldOnlyAccessValidLayers = //
       layeredArchitecture().consideringAllDependencies() //
-          .layer("common").definedBy("com.devonfw.sample.archunit.common..") //
-          .layer("logic").definedBy("com.devonfw.sample.archunit.logic..") //
-          .layer("dataaccess").definedBy("com.devonfw.sample.archunit.dataaccess..") //
-          .layer("service").definedBy("com.devonfw.sample.archunit.service..") //
-          .layer("client").definedBy("com.devonfw.sample.archunit.client..")
+      .layer("common").definedBy("..common..") //
+      .layer("logic").definedBy("..logic..") //
+      .layer("dataaccess").definedBy("..dataaccess..") //
+      .layer("service").definedBy("..service..") //
+      .layer("client").definedBy("..client..")
+      .layer("batch").definedBy("..batch..")
 
-          .withOptionalLayers(true)
+      .whereLayer("client").mayNotBeAccessedByAnyLayer()
+      .whereLayer("batch").mayOnlyBeAccessedByLayers( "logic")
+      .whereLayer("service").mayOnlyBeAccessedByLayers("client")
+      .whereLayer("logic").mayOnlyBeAccessedByLayers("service", "batch")
+      .whereLayer("dataaccess").mayOnlyBeAccessedByLayers("logic")
+      .whereLayer("common").mayOnlyBeAccessedByLayers("common", "dataaccess", "logic", "service")
+
+      .withOptionalLayers(true)
           .because("Dependency of technical layers violates architecture rules.");
   // ...
 
