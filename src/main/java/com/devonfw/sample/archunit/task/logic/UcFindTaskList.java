@@ -7,18 +7,19 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
+import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.devonfw.sample.archunit.task.common.TaskListCto;
 import com.devonfw.sample.archunit.task.common.TaskListEto;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListEntity;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListRepository;
 
 /**
- * Use-Case to find {@link TaskListEntity task-lists}.
+ * {@link AbstractUc Use-case} to find {@link TaskListEntity task-lists}.
  */
 @ApplicationScoped
 @Named
 @Transactional
-public class UcFindTaskList {
+public class UcFindTaskList extends AbstractUc {
 
   @Inject
   TaskListRepository taskListRepository;
