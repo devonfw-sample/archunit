@@ -8,16 +8,17 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.devonfw.sample.archunit.task.common.TaskListEto;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListRepository;
 
 /**
- * Use-Case to delete {@link com.devonfw.sample.archunit.task.common.TaskList}s.
+ * {@link AbstractUc Use-case} to delete {@link com.devonfw.sample.archunit.task.common.TaskList}s.
  */
 @ApplicationScoped
 @Named
 @Transactional
-public class UcDeleteTaskList {
+public class UcDeleteTaskList extends AbstractUc {
 
   private static final Logger LOG = LoggerFactory.getLogger(UcDeleteTaskList.class);
 
