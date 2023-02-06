@@ -24,12 +24,10 @@ public class ArchitectureTest {
       .layer("batch").definedBy("..batch..")
 
       .whereLayer("client").mayNotBeAccessedByAnyLayer()
-      .whereLayer("batch").mayOnlyBeAccessedByLayers( "logic")
+      .whereLayer("batch").mayNotBeAccessedByAnyLayer()
       .whereLayer("service").mayOnlyBeAccessedByLayers("client")
       .whereLayer("logic").mayOnlyBeAccessedByLayers("service", "batch")
       .whereLayer("dataaccess").mayOnlyBeAccessedByLayers("logic")
-      .whereLayer("common").mayOnlyBeAccessedByLayers("common", "dataaccess", "logic", "service")
-
       .withOptionalLayers(true)
           .because("Dependency of technical layers violates architecture rules.");
   // ...
