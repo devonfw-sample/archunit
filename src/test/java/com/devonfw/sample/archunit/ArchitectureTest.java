@@ -30,6 +30,6 @@ public class ArchitectureTest {
       .whereLayer("dataaccess").mayOnlyBeAccessedByLayers("logic")
       .withOptionalLayers(true)
           .because("Dependency of technical layers violates architecture rules.");
-    // ...
+  // ...
 
 }
