@@ -5,17 +5,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
+import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.devonfw.sample.archunit.task.common.TaskListEto;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListEntity;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListRepository;
 
 /**
- * Use-Case to save {@link com.devonfw.sample.archunit.task.common.TaskList}s.
+ * {@link AbstractUc Use-case} to save {@link com.devonfw.sample.archunit.task.common.TaskList}s.
  */
 @ApplicationScoped
 @Named
 @Transactional
-public class UcSaveTaskList {
+public class UcSaveTaskList extends AbstractUc {
 
   @Inject
   TaskListRepository taskListRepository;

@@ -15,7 +15,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class NamingConventionTest {
 
-
     /**
      * DevonNamingConventionCheck verifying that classes extending ApplicationPersistenceEntity are following the
      * naming convention by ending with 'Entity'.
