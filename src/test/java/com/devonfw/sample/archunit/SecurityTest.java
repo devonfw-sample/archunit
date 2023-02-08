@@ -18,13 +18,13 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 public class SecurityTest {
 
     /**
-     * Checks 'UcImpl' classes for public methods.
+     * Checks 'Uc*Impl' classes for public methods.
      * Fails if a method is neither annotated with @PermitAll, @RolesAllowed nor @DenyAll.
      */
     @ArchTest
     private static final ArchRule shouldBeProperlyAnnotated = //
             methods()
-                    .that().areDeclaredInClassesThat().haveSimpleNameEndingWith("UcImpl")
+                    .that().areDeclaredInClassesThat().haveSimpleNameStartingWith("Uc")
                     .and().arePublic()
                     .should().beAnnotatedWith(PermitAll.class)
                     .orShould().beAnnotatedWith(RolesAllowed.class)
