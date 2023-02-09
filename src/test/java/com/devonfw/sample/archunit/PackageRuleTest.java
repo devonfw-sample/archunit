@@ -62,7 +62,6 @@ private static final Pattern pattern = Pattern.compile(DEFAULT_PATTERN);
       @Override
       public void check(JavaClass javaClass, ConditionEvents events) {
           Matcher matcher = pattern.matcher(javaClass.getPackageName());
-          System.out.println(javaClass.getPackageName() +" ---- " +matcher.matches());
           String message = javaClass.getSimpleName() + "test result is" + matcher.matches();
           events.add(new SimpleConditionEvent(javaClass,
                   matcher.matches(), message));
