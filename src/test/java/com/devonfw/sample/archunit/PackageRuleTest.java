@@ -1,7 +1,6 @@
 package com.devonfw.sample.archunit;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static org.mockito.ArgumentMatchers.matches;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption;
