@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 /**
  * JUnit test that validates the Packages of this application.
  */
-
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class PackageRuleTest {
 
