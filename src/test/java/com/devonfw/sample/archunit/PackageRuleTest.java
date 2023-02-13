@@ -48,7 +48,7 @@ private static final String DEFAULT_PATTERN =
   // ....1......................2...........................3...........................4
   "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + PATTERN_LAYERS + ")\\.?(" + PATTERN_SEGMENT + ")*";
 
-private static final Pattern pattern = Pattern.compile(DEFAULT_PATTERN);
+private static final Pattern PATTERN = Pattern.compile(DEFAULT_PATTERN);
 
 /* ArchRule and Condition */
   @ArchTest
@@ -59,8 +59,8 @@ private static final Pattern pattern = Pattern.compile(DEFAULT_PATTERN);
     return new ArchCondition<JavaClass>("check for the package structure to be valid", new Object(){}) {
       @Override
       public void check(JavaClass javaClass, ConditionEvents events) {
-          Matcher matcher = pattern.matcher(javaClass.getPackageName());
-          String message = javaClass.getSimpleName() + "test result is" + matcher.matches();
+          Matcher matcher = PATTERN.matcher(javaClass.getPackageName());
+          String message = javaClass.getSimpleName() + " test result is " + matcher.matches();
           events.add(new SimpleConditionEvent(javaClass,
                   matcher.matches(), message));
       }
