@@ -1,8 +1,8 @@
-package com.devonfw.sample.archunit.archunitviolations;
+package com.devonfw.sample.archunitviolations;
 
 import javax.annotation.security.PermitAll;
 
-public class SecurityViolationUcImpl {
+public class UcY1ViolationImproperSecurityAnnotations {
 
     /**
      * Violation:
