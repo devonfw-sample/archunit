@@ -43,10 +43,10 @@ private static final String PATTERN_LAYERS = LAYER_COMMON + "|"
 private static final String ROOT_PACKAGE =
   // ....1..........................2
   "(" + PATTERN_SEGMENT +")(\\." + PATTERN_SEGMENT +")*";
-  
+
 private static final String DEFAULT_PATTERN = 
   // ....1......................2...........................3...........................4
-  "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + PATTERN_LAYERS + ")\\.?(" + PATTERN_SEGMENT + ")*";
+  "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + PATTERN_LAYERS + ")(\\." + PATTERN_SEGMENT + ")*";
 
 private static final Pattern PATTERN = Pattern.compile(DEFAULT_PATTERN);
 
