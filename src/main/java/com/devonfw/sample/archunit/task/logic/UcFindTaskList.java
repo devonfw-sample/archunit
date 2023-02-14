@@ -2,6 +2,7 @@ package com.devonfw.sample.archunit.task.logic;
 
 import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -10,6 +11,7 @@ import javax.transaction.Transactional;
 import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.devonfw.sample.archunit.task.common.TaskListCto;
 import com.devonfw.sample.archunit.task.common.TaskListEto;
+import com.devonfw.sample.archunit.task.common.security.ApplicationAccessControlConfig;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListEntity;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListRepository;
 
@@ -34,7 +36,7 @@ public class UcFindTaskList extends AbstractUc {
    * @param listId the {@link TaskListEntity#getId() primary key} of the {@link TaskListEntity} to find.
    * @return the {@link TaskListEto} for the given {@link TaskListEto#getId() primary key} or {@code null} if not found.
    */
-  // @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_TASK_LIST)
+  @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_TASK_LIST)
   public TaskListEto findById(Long listId) {
 
     Optional<TaskListEntity> taskList = this.taskListRepository.findById(listId);
@@ -45,7 +47,7 @@ public class UcFindTaskList extends AbstractUc {
    * @param listId the {@link TaskListEntity#getId() primary key} of the {@link TaskListEntity} to find.
    * @return the {@link TaskListCto} for the given {@link TaskListEto#getId() primary key} or {@code null} if not found.
    */
-  // @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_TASK_LIST)
+  @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_FIND_TASK_LIST)
   public TaskListCto findCtoById(Long listId) {
 
     Optional<TaskListEntity> list = this.taskListRepository.findById(listId);
