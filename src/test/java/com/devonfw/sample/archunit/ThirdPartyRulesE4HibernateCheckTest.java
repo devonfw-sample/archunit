@@ -69,7 +69,7 @@ public class ThirdPartyRulesE4HibernateCheckTest {
         return false;
     }
 
-    static ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass> ("misuse hibernate.") {
+    static ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass> ("misuse hibernate (Rule-E4).") {
         @Override
         public void check(JavaClass item, ConditionEvents events) {
             for(Dependency access: item.getDirectDependenciesFromSelf()) {

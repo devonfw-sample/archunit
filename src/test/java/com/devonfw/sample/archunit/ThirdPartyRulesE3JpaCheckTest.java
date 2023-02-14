@@ -28,7 +28,7 @@ public class ThirdPartyRulesE3JpaCheckTest {
         return true;
     }
 
-    static ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass> ("use JPA outside of dataaccess layer or embeddables in common layer") {
+    static ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass> ("use JPA outside of dataaccess layer or embeddables in common layer (Rule-E3)") {
         @Override
         public void check(JavaClass item, ConditionEvents events) {
                 for(Dependency access: item.getDirectDependenciesFromSelf()) {
