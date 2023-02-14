@@ -29,7 +29,7 @@ public class ThirdPartyRulesE1TransactionalTest {
         return false;
     }
 
-    static ArchCondition<JavaClass> miuse_springframework_transactional_annotation = new ArchCondition<JavaClass> ("misuse @Transactional") {
+    static ArchCondition<JavaClass> miuse_springframework_transactional_annotation = new ArchCondition<JavaClass> ("misuse @Transactional (Rule-E1)") {
         @Override
         public void check(JavaClass item, ConditionEvents events) {
                 for(Dependency access: item.getDirectDependenciesFromSelf()) {

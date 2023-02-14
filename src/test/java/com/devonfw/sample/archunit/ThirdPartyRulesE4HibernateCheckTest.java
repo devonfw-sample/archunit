@@ -69,7 +69,7 @@ public class ThirdPartyRulesE4HibernateCheckTest {
         return false;
     }
 
-    static ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass> ("misuse hibernate.") {
+    static ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass> ("misuse hibernate (Rule-E4).") {
         @Override
         public void check(JavaClass item, ConditionEvents events) {
             for(Dependency access: item.getDirectDependenciesFromSelf()) {
@@ -83,7 +83,7 @@ public class ThirdPartyRulesE4HibernateCheckTest {
                     events.add(new SimpleConditionEvent(item, true, message));
                 }
                 if(isUsingProprietaryHibernateAnnotation(item, events, targetPackageName, targetPackageFullName, targetClassDescription, targetSimpleName) == true) {
-                    String message = String.format("Standard JPA annotations should be used instead of this proprietary hibernate annotation (%s). Violated in (%s)", targetPackageFullName, targetClassDescription);
+                    String message = String.format("Standard JPA annotations should be used, (Discouraged annotations: %s) instead this proprietary hibernate annotation (%s) was used. Violated in (%s)", DISCOURAGED_HIBERNATE_ANNOTATIONS, targetPackageFullName, targetClassDescription);
                     events.add(new SimpleConditionEvent(item, true, message));
                 }
                 if(isNotImplementingHibernateEnversInImplScope(item, events, targetPackageName, targetPackageFullName, targetClassDescription, targetSimpleName) == true) {
