@@ -4,3 +4,29 @@ image:https://img.shields.io/github/license/devonfw-sample/archunit.svg?label=Li
 image:https://github.com/devonfw-sample/archunit/actions/workflows/build.yml/badge.svg["Build Status",link="https://github.com/devonfw-sample/archunit/actions/workflows/build.yml"]
 
 Template of https://github.com/devonfw/java/blob/main/modules/ROOT/pages/architecture/layered_architecture.adoc[devonfw Java architecture] validation with https://www.archunit.org/[ArchUnit] and demonstration via sample application.
+Please note that we assume a classic three-layered archicture as described in the link above.
+However, it is easy to adopt this showcase to other architecture styles like https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)[hexagonal architecture].
+
+== Blueprint for architecture validation
+
+Based on ArchUnit we have created a blueprint how to validate a devonfw based architecture that can be found https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[here].
+You can easily adopt, extend or tweak this to the needs of your project.
+It is meant as a best-practice and starting point for projects that want to introduce ArchUnit but do not have time to walk through the entire https://www.archunit.org/userguide/html/000_Index.html[ArchUnit documentation] and figure out how to properly get everything up and running.
+Once you have such a strating point as template, you can quickly adopt and extend it to your own needs.
+
+== Demonstration of violations
+
+In order to demonstrate that the architecture validation is working as expected, we have https://github.com/devonfw-sample/archunit/pulls?q=is%3Apr+is%3Aopen+is%3Adraft[draft pull-requests] introducing new code with bug-patterns violating the architecture validation.
+These PRs shall never be merged or closed but instead they are used as documentation and showcase.
+If you go to the `Files changed` tab in such pull-request, you can see the added or changed code.
+As you can also see the continous-integration workflow we have setup as github action is green on `master` branch but gets red in these pull-requests.
+At the bottom of the `Conversation` tab, you will find the build status `CI Build PR / build (pull_request)` with a red cross and a `Details` link on the right.
+If you follow this link, you will find the log of the failed build where you can see how ArchUnit reports violations.
+This way you can quickly get an impression to see how ArchUnit behaves and understand the impact when you apply it to your project what can be done in minutes.
+
+=== Introducing architecture validation in brown field
+
+However, if you already have a (large) code-base and later want to introduce architecture violation you may get a lot of violations while not having the time or budget to fix all of them.
+You could use ArchUnit exclusion feature to get the test green but prevent new code or changes introducing further violations.
+At the same time, you can file issues for each exclusion and try to mitigate them over time to step-by-step come to a clean architecutre.
+In the end it is better to have know violations that you might not be able to fix them all instead of giving up and acepting further erosion of your architecture and according flaws.
