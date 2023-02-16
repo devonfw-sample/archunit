@@ -14,8 +14,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 /**
  * JUnit test that validates the naming convention rules of this application.
  */
-@AnalyzeClasses(packages = {"com.devonfw.sample.archunit"},
-        importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packages = {"com.devonfw.sample.archunit"}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class NamingConventionTest {
 
     /**
