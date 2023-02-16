@@ -1,5 +1,6 @@
 package com.devonfw.sample.archunit.task.logic;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -7,6 +8,7 @@ import javax.transaction.Transactional;
 
 import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.devonfw.sample.archunit.task.common.TaskListEto;
+import com.devonfw.sample.archunit.task.common.security.ApplicationAccessControlConfig;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListEntity;
 import com.devonfw.sample.archunit.task.dataaccess.TaskListRepository;
 
@@ -28,7 +30,7 @@ public class UcSaveTaskList extends AbstractUc {
    * @param list the {@link TaskListEto} to save.
    * @return the {@link TaskListEntity#getId() primary key} of the saved {@link TaskListEntity}.
    */
-  // @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_SAVE_TASK_LIST)
+  @RolesAllowed(ApplicationAccessControlConfig.PERMISSION_SAVE_TASK_LIST)
   public Long save(TaskListEto list) {
 
     TaskListEntity entity = this.taskListMapper.toEntity(list);
