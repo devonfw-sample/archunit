@@ -19,6 +19,9 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 /**
  * JUnit test that validates the naming convention rules of this application.
  */
@@ -89,18 +92,28 @@ public class NamingConventionTest {
                     }
                         
                    })
-                   .because("Classes extending AbstractEto must be located in the package common");
-//     @ArchTest
-//     private static final ArchRule DevonJpaRepositoryCheck = 
-//                 classes().that().areAssignableTo(JpaRepository.class)
-//                          .should().resideInAnyPackage("..dataaccess..")
-//                          .andShould(new ArchCondition<JavaClass>("check for the jpa naming structure to be valid", new Object(){}) {
-//         @Override 
-//                 public void check(JavaClass javaClass, ConditionEvents events) {
-//                         System.out.println(javaClass.getInterfaces().getTypeParameters());
-//                         // String test = javaClass.getTypeParameters().get(0).getGenericDeclaration().getSimpleName();
-//                         // System.out.println(test + "---");
-//                         events.add(new SimpleConditionEvent(javaClass, true, "message"));
+                   .because("Classes extending AbstractEto must be located in the package common");                 
+                    
+    @ArchTest
+    private static final ArchRule DevonJpaRepositoryCheck = 
+                classes().that().areAssignableTo(JpaRepository.class)
+                         .should().resideInAnyPackage("..dataaccess..")
+                         .andShould(new ArchCondition<JavaClass>("check for the jpa naming structure to be valid", new Object(){}) {
+        @Override 
+                public void check(JavaClass javaClass, ConditionEvents events) {
 
-//                 }});
-// }
+                        Type[] genericInterfaces = javaClass.reflect().getGenericInterfaces();
+                        for (Type genericInterface : genericInterfaces) {
+                            if (genericInterface instanceof ParameterizedType) {
+                                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+                                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+                                System.out.println(typeArguments[0].getTypeName());
+                                // for (Type typeArgument : typeArguments) {
+                                //     System.out.println("Type argument: " + typeArgument.getTypeName());
+                                // }
+                            }
+                        }
+                        events.add(new SimpleConditionEvent(javaClass, true, "message"));
+
+                }});
+}
