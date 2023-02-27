@@ -27,7 +27,7 @@ public class NamingConventionTest {
                     .that().areAssignableTo(AbstractCto.class)
                     .should().haveSimpleNameEndingWith("Cto")
                     .because("Classes extending AbstractCto must follow the naming convention by" +
-                            "ending with 'Cto'.");
+                            " ending with 'Cto'.");
 
     /**
      * DevonNamingConventionCheck N3 verifying that classes extending ApplicationPersistenceEntity are following the
@@ -39,7 +39,7 @@ public class NamingConventionTest {
                     .that().areAssignableTo(ApplicationPersistenceEntity.class)
                     .should().haveSimpleNameEndingWith("Entity")
                     .because("Classes extending ApplicationPersistenceEntity must follow the naming convention by" +
-                            "ending with 'Entity'.");
+                            " ending with 'Entity'.");
 
     /**
      * DevonNamingConventionCheck N4 verifying that classes extending AbstractEto are following the naming convention by
