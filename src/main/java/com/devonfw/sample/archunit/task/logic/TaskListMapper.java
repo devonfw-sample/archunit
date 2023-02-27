@@ -9,7 +9,8 @@ import com.devonfw.sample.archunit.task.dataaccess.TaskListEntity;
  * {@link Mapper} for {@link com.devonfw.sample.archunit.task.common.TaskList}.
  */
 @Mapper(componentModel = "cdi")
-public interface TaskListMapper {
+public interface TaskListMapper
+ {
 
   /**
    * @param task the {@link TaskListEntity} to map.
