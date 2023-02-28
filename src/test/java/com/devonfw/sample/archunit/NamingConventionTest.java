@@ -3,7 +3,6 @@ package com.devonfw.sample.archunit;
 import com.devonfw.sample.archunit.general.common.AbstractEto;
 import com.devonfw.sample.archunit.general.logic.AbstractUc;
 
-import javax.sound.midi.Soundbank;
 import javax.ws.rs.Path;
 import org.mapstruct.Mapper;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,31 +49,45 @@ public class NamingConventionTest {
                     .that().areAssignableTo(AbstractEto.class)
                     .should().haveSimpleNameEndingWith("Eto")
                     .because("Classes extending AbstractEto must follow the naming convention by ending with 'Eto'.");
-
+    /**
+     * DevonApplicationPersistenceEntityCheck verifying that classes extending ApplicationPersistenceEntity have to have be in layer dataaccess
+     */
     @ArchTest
-    private static final ArchRule DevonApplicationPersistenceEntityLocationCheck = 
+    private static final ArchRule DevonApplicationPersistenceEntityCheck = 
             classes()
                    .that().areAssignableTo(ApplicationPersistenceEntity.class).should().resideInAnyPackage("..dataaccess..")
                    .because("Classes extending ApplicationPersistenceEntity must be located in the package dataaccess");
 
+    /**
+     * DevonAbstractUcCheck verifying that classes extending AbstractUc have to have be in layer logic
+     */
     @ArchTest
-    private static final ArchRule DevonAbstractUcLocationCheck = 
+    private static final ArchRule DevonAbstractUcCheck = 
             classes()
                    .that().areAssignableTo(AbstractUc.class).should().resideInAnyPackage("..logic..")
                    .because("Classes extending AbstractUc must be located in the package logic");
-    
+       
+     /**
+     * DevonMapperCheck verifying that classes extending Mapper have to have be in layer logic and end with the suffix Mapper
+     */
     @ArchTest
-    private static final ArchRule DevonMapperLocationandNamingCheck = 
+    private static final ArchRule DevonMapperCheck = 
             classes()   
                    .that().areAnnotatedWith(Mapper.class).should().resideInAnyPackage("..logic..").andShould().haveSimpleNameEndingWith("Mapper")
                    .because("Classes extending Mapper must be located in the package logic and end with Mapper");
 
+     /**
+     * DevonPathCheck verifying that classes extending Path have to have be in layer service and end with the suffix Service
+     */
     @ArchTest
-    private static final ArchRule DevonPathLocationandNamingCheck = 
+    private static final ArchRule DevonPathCheck = 
             classes()   
                    .that().areAnnotatedWith(Path.class).should().resideInAnyPackage("..service..").andShould().haveSimpleNameEndingWith("Service")
                    .because("Classes extending Path must be located in the package service and end with Service");
-        
+
+      /**
+     * DevonAbstractEtoCheck verifying that classes extending AbstractEto have to have be in layer common and implement an interface with the same SimpleName excluding Eto and is in the same Package
+     */                  
     @ArchTest
     private static final ArchRule DevonAbstractEtoCheck = 
             classes()
@@ -85,35 +98,39 @@ public class NamingConventionTest {
                    {
                         @Override  
                         public void check(JavaClass javaClass, ConditionEvents events) {
-                        String supposedInterfaceName = javaClass.getPackageName() + "." + javaClass.getSimpleName().substring(0, javaClass.getSimpleName().length()-3);
-                        boolean hasCorrectInterface = javaClass.getInterfaces().stream().anyMatch(i->i.getName().equals(supposedInterfaceName));
-                        String message = "The Testresult of " + javaClass.getSimpleName() + " was " + hasCorrectInterface;
-                        events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
-                    }
+                                String supposedInterfaceName = javaClass.getPackageName() + "." + javaClass.getSimpleName().replace("Eto", "");
+                                boolean hasCorrectInterface = javaClass.getInterfaces().stream().anyMatch(i->i.getName().equals(supposedInterfaceName));
+                                String message = "The Testresult of " + javaClass.getSimpleName() + " was " + hasCorrectInterface;
+                                events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
+                        }
                         
-                   })
-                   .because("Classes extending AbstractEto must be located in the package common");                 
-                    
+                   });               
+             
+       
+      /**
+     * DevonJpaRepositoryCheck verifying that classes implementing JpaRepository have to have be in layer dataaccess 
+     * and have to be named «EntityName»Repository where «EntityName» is the name of the entity filled in the generic argument of JpaRepository excluding the Entity suffix. 
+     * Further they should be in the same package as the entity.
+     */               
     @ArchTest
     private static final ArchRule DevonJpaRepositoryCheck = 
-                classes().that().areAssignableTo(JpaRepository.class)
-                         .should().resideInAnyPackage("..dataaccess..")
-                         .andShould(new ArchCondition<JavaClass>("check for the jpa naming structure to be valid", new Object(){}) {
-        @Override 
-                public void check(JavaClass javaClass, ConditionEvents events) {
-
-                        Type[] genericInterfaces = javaClass.reflect().getGenericInterfaces();
-                        for (Type genericInterface : genericInterfaces) {
-                            if (genericInterface instanceof ParameterizedType) {
-                                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
-                                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-                                System.out.println(typeArguments[0].getTypeName());
-                                // for (Type typeArgument : typeArguments) {
-                                //     System.out.println("Type argument: " + typeArgument.getTypeName());
-                                // }
-                            }
+            classes().that().areAssignableTo(JpaRepository.class)
+                  .should().resideInAnyPackage("..dataaccess..")
+                  .andShould(new ArchCondition<JavaClass>("check for the jpa naming structure to be valid", new Object(){}) 
+                  {
+                        @Override 
+                        public void check(JavaClass javaClass, ConditionEvents events) {
+                                Boolean hasCorrectName = false;
+                                Type[] genericInterfaces = javaClass.reflect().getGenericInterfaces();
+                                for (Type genericInterface : genericInterfaces) {
+                                        if (genericInterface instanceof ParameterizedType) {
+                                                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+                                                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+                                                String enitiyName = typeArguments[0].getTypeName().replace("Entity", "");
+                                                hasCorrectName = javaClass.getFullName().equals(enitiyName +"Repository");
+                                        }
+                                }
+                                events.add(new SimpleConditionEvent(javaClass, hasCorrectName , "message"));
                         }
-                        events.add(new SimpleConditionEvent(javaClass, true, "message"));
-
-                }});
+                  });
 }
