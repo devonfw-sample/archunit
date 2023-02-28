@@ -16,5 +16,8 @@ import com.tngtech.archunit.core.importer.ImportOption;
 public class ComponentRuleC3LayerService2Service4ComponentTest {
     @ArchTest
     static final ArchRule no_service_layer_depends_on_service_layer_of_another_component =
-    slices().matching("..archunit.(*).service..").namingSlices("$1 service").should().notDependOnEachOther();
+        slices()
+        .matching("..archunit.(*).service..")
+        .namingSlices("$1 service").should().notDependOnEachOther()
+        .as("Code from service layer shall not depend on service layer of a different component");
 }
