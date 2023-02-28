@@ -9,7 +9,6 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
-
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -32,7 +31,7 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
             String sourceClassLayer = getClassLayer(sourceClass);
             String sourceClassComponent = getComponentNameOfClass(sourceClass);
 
-            // All project components service layer except the default component.
+            // Check all project components service layers except the default component for noncompliant dependencies towards other components logic layer.
             if(sourceClassLayer.equals("service") && !sourceClassComponent.equals("")  && !sourceClassComponent.equals(DEFAULT_COMPONENT_SIMPLE_NAME)){
                 for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
                     JavaClass targetClass = dependency.getTargetClass();
@@ -44,7 +43,9 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
                     // WARNING: Dependency of a components service layer towards another components layer other than logic wont be registered as a violation. 
                     // (Other rules cover these violations.)
                     if(targetClassName.startsWith(PROJECT_NAME) && targetClassLayer.equals("logic") && !dependencyAllowed) {
-                        String message = String.format("Code from service layer of a component shall not depend on logic layer of a different component. ('%s.%s' is dependend on '%s.%s'. Dependency to (%s). Violated in: (%s)", sourceClassComponent, sourceClassLayer, targetClassComponent, targetClassLayer, targetClass.getDescription(), sourceClassName);
+                        String message = String.format(
+                            "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)",
+                            sourceClassComponent, sourceClassLayer, targetClassComponent, targetClassLayer, sourceClassName, targetClass.getDescription());
                         events.add(new SimpleConditionEvent(sourceClass, true, message));
                     }
                 }
@@ -56,6 +57,7 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
     static final ArchRule no_dependencies_from_a_components_service_layer_to_anothers_component_logic_layer = 
         noClasses()
         .should(haveNonCompliantComponentDependencies)
+        .as("Code from service layer of a component shall not depend on logic layer of a different component.")
         .allowEmptyShould(true);
 
     /**
