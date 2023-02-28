@@ -1,5 +1,6 @@
 package com.devonfw.sample.archunit;
 
+import com.devonfw.sample.archunit.general.common.AbstractCto;
 import com.devonfw.sample.archunit.general.common.AbstractEto;
 import com.devonfw.sample.archunit.general.logic.AbstractUc;
 
@@ -8,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.devonfw.sample.archunit.general.dataaccess.ApplicationPersistenceEntity;
+import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -28,23 +30,35 @@ import java.lang.reflect.Type;
 public class NamingConventionTest {
 
     /**
-     * DevonNamingConventionCheck verifying that classes extending ApplicationPersistenceEntity are following the
+     * DevonNamingConventionCheck N1 verifying that classes extending AbstractCto are following the
+     * naming convention by ending with 'Cto'.
+     */
+    @ArchTest
+    private static final ArchRule N1DevonNamingConventionCtoCheck =
+            classes()
+                    .that().areAssignableTo(AbstractCto.class)
+                    .should().haveSimpleNameEndingWith("Cto")
+                    .because("Classes extending AbstractCto must follow the naming convention by" +
+                            " ending with 'Cto'.");
+
+    /**
+     * DevonNamingConventionCheck N3 verifying that classes extending ApplicationPersistenceEntity are following the
      * naming convention by ending with 'Entity'.
      */
     @ArchTest
-    private static final ArchRule DevonNamingConventionEntityCheck =
+    private static final ArchRule N3DevonNamingConventionEntityCheck =
             classes()
                     .that().areAssignableTo(ApplicationPersistenceEntity.class)
                     .should().haveSimpleNameEndingWith("Entity")
                     .because("Classes extending ApplicationPersistenceEntity must follow the naming convention by" +
-                            "ending with 'Entity'.");
+                            " ending with 'Entity'.");
 
     /**
-     * DevonNamingConventionCheck verifying that classes extending AbstractEto are following the naming convention by
-     * ending with Eto.
+     * DevonNamingConventionCheck N4 verifying that classes extending AbstractEto are following the naming convention by
+     * ending with 'Eto'.
      */
     @ArchTest
-    private static final ArchRule DevonNamingConventionEtoCheck =
+    private static final ArchRule N4DevonNamingConventionEtoCheck =
             classes()
                     .that().areAssignableTo(AbstractEto.class)
                     .should().haveSimpleNameEndingWith("Eto")
@@ -67,7 +81,7 @@ public class NamingConventionTest {
                    .that().areAssignableTo(AbstractUc.class).should().resideInAnyPackage("..logic..")
                    .because("Classes extending AbstractUc must be located in the package logic");
        
-     /**
+    /**
      * DevonMapperCheck verifying that classes extending Mapper have to have be in layer logic and end with the suffix Mapper
      */
     @ArchTest
@@ -76,7 +90,7 @@ public class NamingConventionTest {
                    .that().areAnnotatedWith(Mapper.class).should().resideInAnyPackage("..logic..").andShould().haveSimpleNameEndingWith("Mapper")
                    .because("Classes extending Mapper must be located in the package logic and end with Mapper");
 
-     /**
+    /**
      * DevonPathCheck verifying that classes extending Path have to have be in layer service and end with the suffix Service
      */
     @ArchTest
@@ -85,7 +99,7 @@ public class NamingConventionTest {
                    .that().areAnnotatedWith(Path.class).should().resideInAnyPackage("..service..").andShould().haveSimpleNameEndingWith("Service")
                    .because("Classes extending Path must be located in the package service and end with Service");
 
-      /**
+    /**
      * DevonAbstractEtoCheck verifying that classes extending AbstractEto have to have be in layer common and implement an interface with the same SimpleName excluding Eto and is in the same Package
      */                  
     @ArchTest
@@ -107,7 +121,7 @@ public class NamingConventionTest {
                    });               
              
        
-      /**
+    /**
      * DevonJpaRepositoryCheck verifying that classes implementing JpaRepository have to have be in layer dataaccess 
      * and have to be named «EntityName»Repository where «EntityName» is the name of the entity filled in the generic argument of JpaRepository excluding the Entity suffix. 
      * Further they should be in the same package as the entity.
@@ -133,4 +147,18 @@ public class NamingConventionTest {
                                 events.add(new SimpleConditionEvent(javaClass, hasCorrectName , "message"));
                         }
                   });
+
+    /**
+     * DevonNamingConventionCheck N5 verifying that non-abstract classes inherited from AbstractUc are following the
+     * devonfw naming convention by beginning with 'Uc' and ending with 'Impl'. They must also implement an interface
+     * with the same name except for the suffix 'Impl'.
+     */
+    @ArchTest
+    private static final ArchRule N5DevonNamingConventionUcCheck =
+            classes()
+                    .that().areAssignableTo(AbstractUc.class)
+                    .and().doNotHaveSimpleName("AbstractUc")
+                    .should().haveSimpleNameStartingWith("Uc")
+                    .because("Classes extending AbstractUc must follow the naming convention by starting with 'Uc'.");
+
 }
