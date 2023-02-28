@@ -52,12 +52,12 @@ public class ComponentRuleC2ComponentDependencyTest {
                     .as("Component Task or componentb").should().notDependOnEachOther();
 
     // componentb should not depend on the task component but not vice versa (unidirectional).
-    // TODO: How to modify the output message ('should not depend on each other' does not fit with my prior message and my intended use case)
     @ArchTest
     static final ArchRule component_task_may_depend_on_componentb =
             slices().matching("..archunit.(*)..").namingSlices("Component $1")
                     .that(containDescription("Component task"))
                     .or(containDescription("Component componentb"))
-                    .as("Task is allowed to depend on componentb but not vice versa.").should().notDependOnEachOther()
+                    .should().notDependOnEachOther()
+                    .as("Component task is allowed to depend on component componentb but not vice versa.")
                     .ignoreDependency(nameContaining("task"), nameContaining("componentb"));
 }
