@@ -1,5 +1,4 @@
 package com.devonfw.sample.archunit;
-
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 import com.tngtech.archunit.core.domain.JavaClass;
