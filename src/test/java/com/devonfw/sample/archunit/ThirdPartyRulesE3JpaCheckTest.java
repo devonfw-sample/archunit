@@ -21,16 +21,16 @@ public class ThirdPartyRulesE3JpaCheckTest {
 
   private static final Pattern PATTERN_DATAACCESS = Pattern.compile(PackageRuleTest.DATAACCESS_PATTERN);
 
-  private static boolean isUsingJavaxPersistenceDataAccessOrEmbeddablesInCommon(JavaClass item,
+  private static boolean isUsingJavaxPersistenceDataAccessOrEmbeddablesInCommon(JavaClass source,
       String targetPackageFullName) {
 
     if (targetPackageFullName.startsWith("javax.persistence")) {
-      Matcher commonMatcher = PATTERN_COMMON.matcher(item.getPackageName());
-      Matcher dataaccessMatcher = PATTERN_DATAACCESS.matcher(item.getPackageName());
+      Matcher commonMatcher = PATTERN_COMMON.matcher(source.getPackageName());
+      Matcher dataaccessMatcher = PATTERN_DATAACCESS.matcher(source.getPackageName());
       if (dataaccessMatcher.matches()) {
         return true;
       }
-      if (commonMatcher.matches() && item.getSimpleName().contains("Embeddable")) {
+      if (commonMatcher.matches() && source.getSimpleName().contains("Embeddable")) {
         return true;
       }
       return false;
@@ -38,7 +38,7 @@ public class ThirdPartyRulesE3JpaCheckTest {
     return true;
   }
 
-  static ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass>(
+  static final ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass>(
       "use JPA outside of dataaccess layer or embeddables in common layer (Rule-E3)") {
     @Override
     public void check(JavaClass item, ConditionEvents events) {
