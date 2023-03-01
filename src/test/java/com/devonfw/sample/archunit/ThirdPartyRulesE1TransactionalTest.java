@@ -17,7 +17,7 @@ public class ThirdPartyRulesE1TransactionalTest {
 
   private static boolean isApiScopedClassUsingTransactional(JavaClass item, String targetPackageFullName) {
 
-    if (targetPackageFullName.equals("javax.transaction.Transactional")) {
+    if (item.getFullName().contains("api") && targetPackageFullName.equals("javax.transaction.Transactional")) {
       return true;
     }
     return false;
@@ -31,7 +31,7 @@ public class ThirdPartyRulesE1TransactionalTest {
     return false;
   }
 
-  static ArchCondition<JavaClass> misuse_springframework_transactional_annotation = new ArchCondition<JavaClass>(
+  static final ArchCondition<JavaClass> misuse_springframework_transactional_annotation = new ArchCondition<JavaClass>(
       "misuse @Transactional (Rule-E1)") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
