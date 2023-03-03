@@ -33,8 +33,6 @@ public class ThirdPartyRulesE4HibernateCheckTest {
 
   private static final String ORG_HIBERNATE_ANNOTATIONS = "org.hibernate.annotations";
 
-  private static final Pattern PATTERN_COMMON = Pattern.compile(PackageRuleTest.COMMON_PATTERN);
-
   private static final Pattern PATTERN_DATAACCESS = Pattern.compile(PackageRuleTest.DATAACCESS_PATTERN);
 
   private static boolean isUsingHibernateOutsideOfDataaccessLayer(JavaClass source, String targetPackageName) {
