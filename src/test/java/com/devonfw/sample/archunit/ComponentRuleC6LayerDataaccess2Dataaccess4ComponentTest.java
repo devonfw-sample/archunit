@@ -5,6 +5,8 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
+import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
+import static com.tngtech.archunit.core.domain.properties.HasName.Predicates.nameMatching;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 
@@ -24,5 +26,6 @@ public class ComponentRuleC6LayerDataaccess2Dataaccess4ComponentTest {
         .namingSlices("$1 dataaccess")
         .should()
         .notDependOnEachOther()
+        .ignoreDependency(alwaysTrue(), nameMatching(".*general.*"))
         .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component");
 }

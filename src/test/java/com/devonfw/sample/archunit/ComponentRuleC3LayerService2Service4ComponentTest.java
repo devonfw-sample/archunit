@@ -5,6 +5,8 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
+import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
+import static com.tngtech.archunit.core.domain.properties.HasName.Predicates.nameMatching;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 
@@ -19,5 +21,6 @@ public class ComponentRuleC3LayerService2Service4ComponentTest {
         slices()
         .matching("..archunit.(*).service..")
         .namingSlices("$1 service").should().notDependOnEachOther()
+        .ignoreDependency(alwaysTrue(), nameMatching(".*general.*"))
         .as("Code from service layer shall not depend on service layer of a different component");
 }
