@@ -24,7 +24,7 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
 
   static final String DEFAULT_COMPONENT_FULL_NAME = PROJECT_NAME + "." + DEFAULT_COMPONENT_SIMPLE_NAME;
 
-  static ArchCondition<JavaClass> haveNonCompliantComponentDependencies = new ArchCondition<JavaClass>(
+  static final ArchCondition<JavaClass> haveNonCompliantComponentDependencies = new ArchCondition<JavaClass>(
       "have dependencies, towards another components logic layer (Rule-C4).") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
@@ -42,12 +42,12 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
           String targetClassName = targetClass.getFullName();
           String targetClassComponent = getComponentNameOfClass(targetClass);
           String targetClassLayer = getClassLayer(targetClass);
-          boolean dependencyAllowed = isAllowedDependency(sourceClass, targetClass);
+          boolean isAllowedDependency = isAllowedDependency(sourceClass, targetClass);
 
           // WARNING: Dependency of a components service layer towards another components layer other than logic wont be
           // registered as a violation.
           // (Other rules cover these violations.)
-          if (targetClassName.startsWith(PROJECT_NAME) && targetClassLayer.equals("logic") && !dependencyAllowed) {
+          if (targetClassName.startsWith(PROJECT_NAME) && targetClassLayer.equals("logic") && !isAllowedDependency) {
             String message = String.format(
                 "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
                 sourceClassLayer, targetClassComponent, targetClassLayer, sourceClassName,
@@ -66,7 +66,11 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
       .allowEmptyShould(true);
 
   /**
-   * Dependency of a components service layer towards the same components logic or common layer is allowed.
+   * Dependency of a components service layer towards the same components logic or common layer is allowed. In addition
+   * a dependency towards the projects default component is allowed too.
+   *
+   * @param sourceClass Source JavaClass to check if dependencies from itself towards targetClass are allowed.
+   * @param targetClass Target JavaClass to check if dependencies from sourceClass towards it are allowed.
    */
   private static boolean isAllowedDependency(JavaClass sourceClass, JavaClass targetClass) {
 
@@ -89,6 +93,8 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
   /**
    * Returns the name of the layer of a given class, if the class does lie in a projects component. Otherwise returns a
    * blank string "".
+   *
+   * @param clazz JavaClass to get the layer name off.
    */
   private static String getClassLayer(JavaClass clazz) {
 
@@ -108,6 +114,8 @@ public class ComponentRuleC4LayerService2Logic4ComponentTest {
   /**
    * Returns the name of the component of a given class, if the class does lie in a projects component. Otherwise
    * returns a blank string "".
+   *
+   * @param clazz JavaClass to get the component name off.
    */
   private static String getComponentNameOfClass(JavaClass clazz) {
 
