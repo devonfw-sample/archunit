@@ -44,7 +44,8 @@ public class ComponentRuleC7LayerBatch2Logic4ComponentTest {
                     // WARNING: Dependency of a components batch layer towards another components layer other than logic wont be registered as a violation. 
                     // (Other rules cover these violations.)
                     if(targetClassName.startsWith(PROJECT_NAME) && targetClassLayer.equals("batch") && !dependencyAllowed) {
-                        String message = String.format("Code from batch layer of a component shall not depend on logic layer of a different component. ('%s.%s' is dependend on '%s.%s'. Dependency to (%s). Violated in: (%s)", sourceClassComponent, sourceClassLayer, targetClassComponent, targetClassLayer, targetClass.getDescription(), sourceClassName);
+                        String message = String.format(
+                            "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent, sourceClassLayer, targetClassComponent, targetClassLayer, targetClass.getDescription(), sourceClassName);
                         events.add(new SimpleConditionEvent(sourceClass, true, message));
                     }
                 }
@@ -56,6 +57,7 @@ public class ComponentRuleC7LayerBatch2Logic4ComponentTest {
     static final ArchRule no_dependencies_from_a_components_batch_layer_to_anothers_component_logic_layer = 
         noClasses()
         .should(haveNonCompliantComponentDependencies)
+        .as("Code from batch layer of a component shall not depend on logic layer of a different component.")
         .allowEmptyShould(true);
 
     /**

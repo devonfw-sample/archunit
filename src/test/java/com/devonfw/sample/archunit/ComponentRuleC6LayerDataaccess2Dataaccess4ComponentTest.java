@@ -23,5 +23,6 @@ public class ComponentRuleC6LayerDataaccess2Dataaccess4ComponentTest {
         .matching("..archunit.(*).dataaccess..")
         .namingSlices("$1 dataaccess")
         .should()
-        .notDependOnEachOther();
+        .notDependOnEachOther()
+        .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component");
 }
