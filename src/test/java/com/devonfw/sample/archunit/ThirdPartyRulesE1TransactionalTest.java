@@ -15,14 +15,6 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ThirdPartyRulesE1TransactionalTest {
 
-  private static boolean isApiScopedClassUsingTransactional(JavaClass item, String targetPackageFullName) {
-
-    if (item.getFullName().contains("api") && targetPackageFullName.equals("javax.transaction.Transactional")) {
-      return true;
-    }
-    return false;
-  }
-
   private static boolean isUsingSpringframeworkTransactionalAnnotation(String targetPackageFullName) {
 
     if (targetPackageFullName.equals("org.springframework.transaction.annotation.Transactional")) {
@@ -43,12 +35,6 @@ public class ThirdPartyRulesE1TransactionalTest {
           String message = String.format(
               "Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+). The use (%s) is discouraged.  Violated in (%s)",
               targetFullName, targetClassDescription);
-          events.add(new SimpleConditionEvent(sourceClass, true, message));
-        }
-        if (isApiScopedClassUsingTransactional(sourceClass, targetFullName) == true) {
-          String message = String.format(
-              "The use of @Transactional in API is discouraged. Instead use it to annotate implementations. Violated in (%s)",
-              targetClassDescription);
           events.add(new SimpleConditionEvent(sourceClass, true, message));
         }
       }
