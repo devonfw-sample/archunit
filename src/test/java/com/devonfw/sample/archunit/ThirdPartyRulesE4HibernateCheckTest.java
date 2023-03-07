@@ -53,31 +53,9 @@ public class ThirdPartyRulesE4HibernateCheckTest {
     return false;
   }
 
-  // TODO 1.1: Figure out how to eliminate the impl scope condition.
-  private static boolean isNotImplementingHibernateEnversInImplScope(JavaClass source, String targetPackageName,
-      String targetSimpleName) {
-
-    if (targetPackageName.startsWith(ORG_HIBERNATE_ENVERS) && !source.getPackageName().contains("impl")
-        && (!targetPackageName.equals(ORG_HIBERNATE_ENVERS) || targetSimpleName.startsWith("Default")
-            || targetSimpleName.contains("Listener") || targetSimpleName.contains("Reader"))) {
-      return true;
-    }
-    return false;
-  }
-
   private static boolean isImplementingHibernateEnversInternalsDirectly(String targetPackageName) {
 
     if (targetPackageName.startsWith(ORG_HIBERNATE_ENVERS) && targetPackageName.contains("internal")) {
-      return true;
-    }
-    return false;
-  }
-
-  // TODO 1.2: Figure out how to eliminate the impl scope condition.
-  private static boolean isUsingHibernateOutsideOfImplScope(JavaClass source, String targetPackageName) {
-
-    if (!source.getPackageName().contains("impl") && targetPackageName.startsWith("org.hibernate")
-        && !targetPackageName.startsWith(ORG_HIBERNATE_VALIDATOR)) {
       return true;
     }
     return false;
@@ -104,21 +82,9 @@ public class ThirdPartyRulesE4HibernateCheckTest {
                 targetPackageFullName, targetClassDescription);
             events.add(new SimpleConditionEvent(source, true, message));
           }
-          if (isNotImplementingHibernateEnversInImplScope(source, targetPackageName, targetSimpleName) == true) {
-            String message = String.format(
-                "Hibernate envers implementation (%s) should only be used in impl scope of dataaccess layer. Violated in (%s)",
-                targetPackageFullName, targetClassDescription);
-            events.add(new SimpleConditionEvent(source, true, message));
-          }
           if (isImplementingHibernateEnversInternalsDirectly(targetPackageName) == true) {
             String message = String.format(
                 "Hibernate envers internals (%s) should never be used directly. Violated in (%s)",
-                targetPackageFullName, targetClassDescription);
-            events.add(new SimpleConditionEvent(source, true, message));
-          }
-          if (isUsingHibernateOutsideOfImplScope(source, targetPackageName) == true) {
-            String message = String.format(
-                "Hibernate internals (%s) should only be used in impl scope of dataaccess layer. Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
             events.add(new SimpleConditionEvent(source, true, message));
           }
