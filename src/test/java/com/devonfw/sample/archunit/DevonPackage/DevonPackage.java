@@ -102,16 +102,6 @@ public interface DevonPackage {
     }
 
     /**
-     * @return {@code true} if the {@link #getComponent() component} is
-     *         {@link Component#NAME_GENERAL general},
-     *         {@code false} otherwise.
-     */
-    default boolean isComponentGeneral() {
-
-        return Component.NAME_GENERAL.equals(getComponent());
-    }
-
-    /**
      * @param otherPkg the other {@link DevonPackage} to compare.
      * @return {@code true} if both this and the given {@link DevonPackage}s have
      *         the same {@link #getComponent()

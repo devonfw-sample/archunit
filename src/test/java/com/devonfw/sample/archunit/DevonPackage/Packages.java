@@ -11,31 +11,31 @@ import java.util.regex.Pattern;
  */
 public class Packages {
     /* Layer */
-    public static final String LAYER_COMMON = "common";
+    private static final String LAYER_COMMON = "common";
 
-    public static final String LAYER_DATA_ACCESS = "dataaccess";
+    private static final String LAYER_DATA_ACCESS = "dataaccess";
 
-    public static final String LAYER_LOGIC = "logic";
+    private static final String LAYER_LOGIC = "logic";
 
-    public static final String LAYER_SERVICE = "service";
+    private static final String LAYER_SERVICE = "service";
 
-    public static final String LAYER_CLIENT = "client";
+    private static final String LAYER_CLIENT = "client";
 
-    public static final String LAYER_BATCH = "batch";
+    private static final String LAYER_BATCH = "batch";
 
-    public static final String SCOPE_API = "api";
+    private static final String SCOPE_API = "api";
 
-    public static final String SCOPE_BASE = "base";
+    private static final String SCOPE_BASE = "base";
 
-    public static final String SCOPE_IMPLEMENTATION = "impl";
+    private static final String SCOPE_IMPLEMENTATION = "impl";
 
-    public static final String GROUP_COMPONENT = "component";
+    private static final String GROUP_COMPONENT = "component";
 
-    public static final String GROUP_LAYER = "layer";
+    private static final String GROUP_LAYER = "layer";
 
-    public static final String GROUP_SCOPE = "scope";
+    private static final String GROUP_SCOPE = "scope";
 
-    public static final String GROUP_DETAIL = "detail";
+    private static final String GROUP_DETAIL = "detail";
 
     private static final String PATTERN_LAYERS = LAYER_COMMON + "|"
             + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|"
@@ -48,7 +48,7 @@ public class Packages {
     private static final String REGEX_COMPONENT = "([a-zA-Z0-9_]+)";
     private static final String REGEX_LAYER = "(" + PATTERN_LAYERS + ")";
     private static final String REGEX_SCOPE = "(" + PATTERN_SCOPES + ")?[.]?";
-    private static final String REGEX_DETAIL = "(.[a-zA-Z0-9_]+)?";
+    private static final String REGEX_DETAIL = "([a-zA-Z0-9_]+[.])?";
     private static final String REGEX_CLASS = "[.]?([a-zA-Z0-9_]+)*";
     private static final String DEFAULT_PATTERN =
             // ....1................2....................(3).................(4)....................5
