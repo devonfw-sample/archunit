@@ -1,4 +1,3 @@
-@@ -0,0 +1,346 @@
 package com.devonfw.sample.archunit;
 
 import java.util.regex.Matcher;
