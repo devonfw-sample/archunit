@@ -91,7 +91,7 @@ public class ComponentRuleTest {
             String sourceClassComponent = sourcePkg.getComponent();
 
             // All project components logic layer except the default component.
-            if (sourceClassLayer.equals("logic") && !sourceClassComponent.equals("")
+            if (sourcePkg.isLayerLogic() && !sourceClassComponent.equals("")
                     && !sourceClassComponent.equals("general")) {
                 for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
                     JavaClass targetClass = dependency.getTargetClass();
