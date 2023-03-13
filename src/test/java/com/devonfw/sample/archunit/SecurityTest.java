@@ -70,8 +70,6 @@ public class SecurityTest {
     private static final ArchRule shouldnTUseCreateQuery = noClasses().should().callMethodWhere(new DescribedPredicate<JavaMethodCall>("test if used") {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
-                if(javaMethod.getOriginOwner().getSimpleName().equals("EnitityManager") || 
-                   javaMethod.getOriginOwner().isAssignableFrom(EntityManager.class) ){
                         if(javaMethod.getName().equals("createQuery")){
                                 System.out.println(javaMethod.getTarget().getParameterTypes());
                                 Matcher matcherCQ = PARAMETER_PATERN_CQ.matcher(javaMethod.getTarget().getParameterTypes().toString());
@@ -79,8 +77,7 @@ public class SecurityTest {
                         }else if(javaMethod.getName() == "createNativQuery"){
                                 Matcher matcherCNQ = PARAM_PATTERN_CNQ.matcher(javaMethod.getTarget().getParameterTypes().toString());
                                 return matcherCNQ.find();
-                        }
-                }                        
+                        }                        
                 return false;                        
             }
      });            
