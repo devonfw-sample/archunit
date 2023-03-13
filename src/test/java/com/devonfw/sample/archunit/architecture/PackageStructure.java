@@ -1,4 +1,4 @@
-package com.devonfw.sample.archunit.DevonPackage;
+package com.devonfw.sample.archunit.architecture;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,6 +99,8 @@ public class PackageStructure {
             GROUP_DETAIL);
 
     private static final int MINIMUM_ROOT_SEGMENTS = 3;
+
+    private static final Pattern PATTERN = Pattern.compile(DEFAULT_PATTERN);
 
     /**
      * The constructor.
@@ -383,8 +385,7 @@ public class PackageStructure {
         String layer = "";
         String scope = "";
         String detail = "";
-        Pattern pattern = Pattern.compile(DEFAULT_PATTERN);
-        Matcher matcher = pattern.matcher(source);
+        Matcher matcher = PATTERN.matcher(source);
         int i = 1;
         if (matcher.find()) {
             int start = matcher.start();
