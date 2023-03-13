@@ -1,454 +1,347 @@
-package com.devonfw.sample.archunit.architecture;
+@@ -0,0 +1,346 @@
+package com.devonfw.sample.archunit;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 
 /**
- * Wrapper for a {@link Class#getPackage() package}
+ * A structured representation of a {@link Package#getName() package name} according to the architecture definition of
+ * this project.
  */
 public class PackageStructure {
-    /* Layer */
-    private static final String LAYER_COMMON = "common";
 
-    private static final String LAYER_DATA_ACCESS = "dataaccess";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_COMMON = "common";
 
-    private static final String LAYER_LOGIC = "logic";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_DATA_ACCESS = "dataaccess";
 
-    private static final String LAYER_SERVICE = "service";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_LOGIC = "logic";
 
-    private static final String LAYER_CLIENT = "client";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_SERVICE = "service";
 
-    private static final String LAYER_BATCH = "batch";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_CLIENT = "client";
 
-    private static final String SCOPE_API = "api";
+  /** The {@link #getLayer() layer} {@value} */
+  public static final String LAYER_BATCH = "batch";
 
-    private static final String SCOPE_BASE = "base";
+  /** The {@link #getScope() scope} {@value} */
+  public static final String SCOPE_API = "api";
 
-    private static final String SCOPE_IMPLEMENTATION = "impl";
-    /**
-     * {@link Packages#getGroups() Group name} for the {@link #getComponent()
-     * component}.
-     */
-    public static final String GROUP_COMPONENT = "component";
+  /** The {@link #getScope() scope} {@value} */
+  public static final String SCOPE_BASE = "base";
 
-    /**
-     * {@link Packages#getGroups() Group name} for the {@link #getLayer() layer}.
-     */
-    public static final String GROUP_LAYER = "layer";
+  /** The {@link #getScope() scope} {@value} */
+  public static final String SCOPE_IMPLEMENTATION = "impl";
 
-    /**
-     * {@link Packages#getGroups() Group name} for the {@link #getScope() scope}.
-     */
-    public static final String GROUP_SCOPE = "scope";
+  private final String packageName;
 
-    /**
-     * {@link Packages#getGroups() Group name} for the {@link #getDetail() detail}.
-     */
-    public static final String GROUP_DETAIL = "detail";
+  private final boolean valid;
 
-    /** {@link Packages#getGroups() Group name} of group to be ignored. */
-    public static final String GROUP_IGNORE = "-";
+  private final String root;
 
-    private static final Logger LOGGER = Logger.getLogger(PackageStructure.class.getName());
+  private final String component;
 
-    private final String packageName;
+  private final String layer;
 
-    private final boolean valid;
+  private final String scope;
 
-    private final String root;
+  private final String detail;
 
-    private final String component;
+  private static final String PATTERN_LAYERS = LAYER_COMMON + "|" + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|"
+      + LAYER_BATCH + "|" + LAYER_LOGIC + "|" + LAYER_CLIENT + "|gui";
 
-    private final String layer;
+  private static final String REGEX_SEGMENT = "[a-z][a-zA-Z0-9_]+";
 
-    private final String scope;
+  private static final String PATTERN_SCOPES = SCOPE_API + "|" + SCOPE_BASE + "|" + SCOPE_IMPLEMENTATION;
 
-    private final String detail;
+  private static final String REGEX_PACKAGE =
+      // 1..root.....................................2..
+      "(" + REGEX_SEGMENT + "\\." + REGEX_SEGMENT + "(" + "\\." + REGEX_SEGMENT + ")*" + ")" //
+      // .......3....component............4....layer..............5...6....scope
+          + "\\.(" + REGEX_SEGMENT + ")\\.(" + PATTERN_LAYERS + ")(\\.(" + PATTERN_SCOPES + "))?"//
+          // ....7....detail...........8..
+          + "\\.?(" + REGEX_SEGMENT + "(\\." + REGEX_SEGMENT + ")*)?";
 
-    private String application;
+  private static final Pattern PATTERN = Pattern.compile(REGEX_PACKAGE);
 
-    private static final List<String> LAYERS = Arrays.asList(LAYER_BATCH, LAYER_CLIENT, LAYER_COMMON, LAYER_DATA_ACCESS,
-            LAYER_LOGIC, LAYER_SERVICE);
+  /**
+   * The constructor.
+   *
+   * @param packageName the {@link #getPackage() package name}.
+   * @param valid the {@link #isValid() valid flag}.
+   * @param root the {@link #getRoot() root package}.
+   * @param component the {@link #getComponent() component}.
+   * @param layer the {@link #getLayer() layer}.
+   * @param scope the {@link #getScope() scope}.
+   * @param detail the {@link #getDetail() detail}.
+   */
+  public PackageStructure(String packageName, boolean valid, String root, String component, String layer, String scope,
+      String detail) {
 
-    private static final List<String> SCOPES = Arrays.asList(SCOPE_API, SCOPE_BASE, SCOPE_IMPLEMENTATION);
+    super();
+    this.packageName = packageName;
+    this.valid = valid;
+    this.root = root;
+    this.component = component;
+    this.layer = layer;
+    this.scope = scope;
+    this.detail = detail;
+  }
 
-    private static final String PATTERN_LAYERS = LAYER_COMMON + "|"
-            + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|"
-            + LAYER_BATCH + "|" + LAYER_LOGIC + "|"
-            + LAYER_CLIENT + "|gui";
+  /**
+   * @return the {@link Class#getPackage() package} as plain {@link String}.
+   */
+  public String getPackage() {
 
-    private static final String PATTERN_SCOPES = SCOPE_API + "|"
-            + SCOPE_BASE + "|" + SCOPE_IMPLEMENTATION;
+    return this.packageName;
+  }
 
-    private static final String REGEX_COMPONENT = "([a-zA-Z0-9_]+)";
-    private static final String REGEX_LAYER = "(" + PATTERN_LAYERS + ")";
-    private static final String REGEX_SCOPE = "(" + PATTERN_SCOPES + ")?[.]?";
-    private static final String REGEX_DETAIL = "([a-zA-Z0-9_]+[.])?";
-    private static final String REGEX_CLASS = "[.]?([a-zA-Z0-9_]+)*";
-    private static final String DEFAULT_PATTERN =
-            // ....1................2....................(3).................(4)....................5
-            REGEX_COMPONENT + "[.]" + REGEX_LAYER + "[.]" + REGEX_SCOPE + REGEX_DETAIL + REGEX_CLASS;
-    private static final List<String> DEFAULT_GROUPS = Arrays.asList(GROUP_COMPONENT,
-            GROUP_LAYER, GROUP_SCOPE,
-            GROUP_DETAIL);
+  /**
+   * Valid architecture package pattern: (root).(component).(layer)[.(scope).(detail)] (scope and detail are optional),
+   * Valid package example: 'com.devonfw.sample.archunit.task.service.api'. Where root = com.devonfw.sample; component =
+   * task; layer = service; scope = "api"; detail = "";
+   *
+   * @return {@code true} if this {@link #getPackage() package} is valid according to architecture pattern,
+   *         {@code false} otherwise.
+   *
+   */
+  public boolean isValid() {
 
-    private static final int MINIMUM_ROOT_SEGMENTS = 3;
+    return this.valid;
+  }
 
-    private static final Pattern PATTERN = Pattern.compile(DEFAULT_PATTERN);
+  /**
+   * @return the name of the root-package before the pattern matched. Will be the empty {@link String} if not
+   *         {@link #isValid() valid}.
+   */
+  public String getRoot() {
 
-    /**
-     * The constructor.
-     *
-     * @param packageName the {@link #getPackage() package name}.
-     * @param valid       the {@link #isValid() valid flag}.
-     * @param root        the {@link #getRoot() root package}.
-     * @param component   the {@link #getComponent() component}.
-     * @param layer       the {@link #getLayer() layer}.
-     * @param scope       the {@link #getScope() scope}.
-     * @param detail      the {@link #getDetail() detail}.
-     */
-    public PackageStructure(String packageName, boolean valid, String root, String component, String layer,
-            String scope,
-            String detail) {
+    return this.root;
+  }
 
-        super();
-        this.packageName = packageName;
-        this.valid = valid;
-        this.root = root;
-        this.component = component;
-        this.layer = layer;
-        this.scope = scope;
-        this.detail = detail;
+  /**
+   * @param otherPkg the other {@link PackageStructure} to compare.
+   * @return {@code true} if both this and the given {@link PackageStructure}s have the same {@link #getRoot() root},
+   *         {@code false} otherwise.
+   */
+  public boolean hasSameRoot(PackageStructure otherPkg) {
+
+    return getRoot().equals(otherPkg.getRoot());
+  }
+
+  /**
+   * @return the name of the component. Will be the empty {@link String} if not {@link #isValid() valid}.
+   */
+  public String getComponent() {
+
+    return this.component;
+  }
+
+  /**
+   * @param otherPkg the other {@link PackageStructure} to compare.
+   * @return {@code true} if both this and the given {@link PackageStructure}s have the same {@link #getComponent()
+   *         component}, {@code false} otherwise.
+   */
+  public boolean hasSameComponent(PackageStructure otherPkg) {
+
+    return getComponent().equals(otherPkg.getComponent());
+  }
+
+  /**
+   * @return the name of the layer. Will be the empty {@link String} if not {@link #isValid() valid}.
+   */
+  public String getLayer() {
+
+    return this.layer;
+  }
+
+  /**
+   * @param otherPkg the other {@link PackageStructure} to compare.
+   * @return {@code true} if both this and the given {@link PackageStructure}s have the same {@link #getLayer() layer},
+   *         {@code false} otherwise.
+   */
+  public boolean hasSameLayer(PackageStructure otherPkg) {
+
+    return getLayer().equals(otherPkg.getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_BATCH batch}, {@code false} otherwise.
+   */
+  public boolean isLayerBatch() {
+
+    return LAYER_BATCH.equals(getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_CLIENT client}, {@code false} otherwise.
+   */
+  public boolean isLayerClient() {
+
+    return LAYER_CLIENT.equals(getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_COMMON common}, {@code false} otherwise.
+   */
+  public boolean isLayerCommon() {
+
+    return LAYER_COMMON.equals(getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_DATA_ACCESS dataaccess}, {@code false}
+   *         otherwise.
+   */
+  public boolean isLayerDataAccess() {
+
+    return LAYER_DATA_ACCESS.equals(getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_LOGIC logic}, {@code false} otherwise.
+   */
+  public boolean isLayerLogic() {
+
+    return LAYER_LOGIC.equals(getLayer());
+  }
+
+  /**
+   * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_SERVICE service}, {@code false} otherwise.
+   */
+  public boolean isLayerService() {
+
+    return LAYER_SERVICE.equals(getLayer());
+  }
+
+  /**
+   * @return the name of the scope. Will be the empty {@link String} if not {@link #isValid() valid}.
+   */
+  public String getScope() {
+
+    return this.scope;
+  }
+
+  /**
+   * @return {@code true} if {@link #getScope() scope} is present (not empty).
+   */
+  public boolean hasScope() {
+
+    return !this.scope.isEmpty();
+  }
+
+  /**
+   * @return {@code true} if the {@link #getScope() scope} is {@link #SCOPE_API api}, {@code false} otherwise.
+   */
+  public boolean isScopeApi() {
+
+    return SCOPE_API.equals(this.scope);
+  }
+
+  /**
+   * @return {@code true} if the {@link #getScope() scope} is {@link #SCOPE_BASE base}, {@code false} otherwise.
+   */
+  public boolean isScopeBase() {
+
+    return SCOPE_BASE.equals(this.scope);
+  }
+
+  /**
+   * @return {@code true} if the {@link #getScope() scope} is {@link #SCOPE_IMPLEMENTATION impl}, {@code false}
+   *         otherwise.
+   */
+  public boolean isScopeImpl() {
+
+    return SCOPE_IMPLEMENTATION.equals(this.scope);
+  }
+
+  /**
+   * @return the detail (suffix) of the package after the official segments specified by the architecture. Will be the
+   *         empty {@link String} if not present.
+   */
+  public String getDetail() {
+
+    return this.detail;
+  }
+
+  /**
+   * @return {@code true} if {@link #getDetail() detail} is present (not empty).
+   */
+  public boolean hasDetail() {
+
+    return !this.detail.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+
+    return this.packageName;
+  }
+
+  /**
+   * @param pkgName the {@link Package#getName() package name} (excluding the type/class).
+   * @return a new {@link PackageStructure} instance parsed from the given {@code pkgName}.
+   */
+  public static PackageStructure of(String pkgName) {
+
+    String root = "";
+    String component = "";
+    String layer = "";
+    String scope = "";
+    String detail = "";
+    Matcher matcher = PATTERN.matcher(pkgName);
+    boolean valid = matcher.matches();
+    if (valid) {
+      root = matcher.group(1);
+      component = matcher.group(3);
+      layer = matcher.group(4);
+      scope = nonNull(matcher.group(6));
+      detail = nonNull(matcher.group(7));
     }
+    return new PackageStructure(pkgName, valid, root, component, layer, scope, detail);
+  }
 
-    /**
-     * @return the {@link Class#getPackage() package} as plain {@link String}.
-     */
-    public String getPackage() {
+  /**
+   * @param type the arch-unit {@link JavaClass}.
+   * @return a new {@link PackageStructure} instance parsed from the {@code JavaClass#getPackageName() package name} of
+   *         the given {@link JavaClass}.
+   */
+  public static PackageStructure of(JavaClass type) {
 
-        return this.packageName;
+    return of(type.getPackageName());
+  }
+
+  /**
+   * @param type the java {@link Class}.
+   * @return a new {@link PackageStructure} instance parsed from the {@code Class#getPackageName() package name} of the
+   *         given {@link Class}.
+   */
+  public static PackageStructure of(Class<?> type) {
+
+    return of(type.getPackageName());
+  }
+
+  /**
+   * @param pkg the java {@link Package}.
+   * @return a new {@link PackageStructure} instance parsed from the {@code Package#getName() package name} of the given
+   *         {@link Package}.
+   */
+  public static PackageStructure of(Package pkg) {
+
+    return of(pkg.getName());
+  }
+
+  private static String nonNull(String s) {
+
+    if (s == null) {
+      return "";
     }
-
-    /**
-     * Valid architecture package pattern:
-     * (root).(component).(layer)[.(scope).(detail)] (scope and
-     * detail are optional),
-     * Valid package example:
-     * 'com.devonfw.sample.archunit.task.service.api'. Where root =
-     * com.devonfw.sample; component = task; layer = service; scope = "api";
-     * detail = "";
-     * 
-     * @return {@code true} if this {@link #getPackage() package} is valid according
-     *         to architecture pattern,
-     *         {@code false} otherwise.
-     * 
-     */
-    public boolean isValid() {
-
-        return this.valid;
-    }
-
-    /**
-     * @return the name of the root-package before the pattern matched. Will be the
-     *         empty {@link String} if not
-     *         {@link #isValid() valid}.
-     */
-    public String getRoot() {
-
-        return this.root;
-    }
-
-    /**
-     * @param otherPkg the other {@link PackageStructure} to compare.
-     * @return {@code true} if both this and the given
-     *         {@link PackageStructure}s have
-     *         the same {@link #getRoot() root},
-     *         {@code false} otherwise.
-     */
-    public boolean hasSameRoot(PackageStructure otherPkg) {
-
-        return getRoot().equals(otherPkg.getRoot());
-    }
-
-    /**
-     * @param otherPkg the other {@link PackageStructure} to compare.
-     * @return {@code true} if both this and the given
-     *         {@link PackageStructure}s have
-     *         the same {@link #getComponent()
-     *         component}, {@code false} otherwise.
-     */
-    public boolean hasSameComponent(PackageStructure otherPkg) {
-
-        return getComponent().equals(otherPkg.getComponent());
-    }
-
-    /**
-     * @param otherPkg the other {@link PackageStructure} to compare.
-     * @return {@code true} if both this and the given
-     *         {@link PackageStructure}s have
-     *         the same {@link #getComponent()
-     *         component}, {@link #getLayer() layer}, and {@link #getRoot() root},
-     *         {@code false} otherwise.
-     */
-    public boolean hasSameComponentPart(PackageStructure otherPkg) {
-
-        return hasSameComponent(otherPkg) && hasSameLayer(otherPkg) && hasSameRoot(otherPkg);
-    }
-
-    /**
-     * @return the name of the component. Will be the empty {@link String} if not
-     *         {@link #isValid() valid}.
-     */
-    public String getComponent() {
-
-        return this.component;
-    }
-
-    /**
-     * @return the name of the layer. Will be the empty {@link String} if not
-     *         {@link #isValid() valid}.
-     */
-    public String getLayer() {
-
-        return this.layer;
-    }
-
-    /**
-     * @param otherPkg the other {@link PackageStructure} to compare.
-     * @return {@code true} if both this and the given
-     *         {@link PackageStructure}s have
-     *         the same {@link #getLayer() layer},
-     *         {@code false} otherwise.
-     */
-    public boolean hasSameLayer(PackageStructure otherPkg) {
-
-        return getLayer().equals(otherPkg.getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is a valid architecture
-     *         layer, {@code false} otherwise.
-     */
-    public boolean isValidLayer() {
-
-        return LAYERS.contains((this.layer));
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_BATCH
-     *         batch}, {@code false} otherwise.
-     */
-    public boolean isLayerBatch() {
-
-        return LAYER_BATCH.equals(getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_CLIENT
-     *         client}, {@code false} otherwise.
-     */
-    public boolean isLayerClient() {
-
-        return LAYER_CLIENT.equals(getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_COMMON
-     *         common}, {@code false} otherwise.
-     */
-    public boolean isLayerCommon() {
-
-        return LAYER_COMMON.equals(getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is
-     *         {@link #LAYER_DATA_ACCESS dataaccess}, {@code false}
-     *         otherwise.
-     */
-    public boolean isLayerDataAccess() {
-
-        return LAYER_DATA_ACCESS.equals(getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is {@link #LAYER_LOGIC
-     *         logic}, {@code false} otherwise.
-     */
-    public boolean isLayerLogic() {
-
-        return LAYER_LOGIC.equals(getLayer());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getLayer() layer} is
-     *         {@link #LAYER_SERVICE service}, {@code false} otherwise.
-     */
-    public boolean isLayerService() {
-
-        return LAYER_SERVICE.equals(getLayer());
-    }
-
-    /**
-     * @return the name of the scope. Will be the empty {@link String} if not
-     *         {@link #isValid() valid}.
-     */
-    public String getScope() {
-
-        return this.scope == null ? "" : this.scope;
-    }
-
-    /**
-     * @return {@code true} if the {@link #getScope() scope} is a valid architecture
-     *         scope, {@code false} otherwise.
-     */
-    public boolean isValidScope() {
-
-        return SCOPES.contains(this.scope);
-    }
-
-    /**
-     * @return {@code true} if the {@link #getScope() scope} is {@link #SCOPE_API
-     *         api}, {@code false} otherwise.
-     */
-    public boolean isScopeApi() {
-
-        return SCOPE_API.equals(getScope());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getScope() scope} is {@link #SCOPE_BASE
-     *         base}, {@code false} otherwise.
-     */
-    public boolean isScopeBase() {
-
-        return SCOPE_BASE.equals(getScope());
-    }
-
-    /**
-     * @return {@code true} if the {@link #getScope() scope} is
-     *         {@link #SCOPE_IMPLEMENTATION impl}, {@code false}
-     *         otherwise.
-     */
-    public boolean isScopeImpl() {
-
-        return SCOPE_IMPLEMENTATION.equals(getScope());
-    }
-
-    /**
-     * @return the name of the application. Will be the empty {@link String} if not
-     *         {@link #isValid() valid}.
-     */
-    public String getApplication() {
-
-        if (this.application == null) {
-            int lastIndexOfRoot = this.root.lastIndexOf(".");
-            if (lastIndexOfRoot > 0) {
-                this.application = this.root.substring(lastIndexOfRoot + 1);
-            } else {
-                this.application = this.root;
-            }
-        }
-        return this.application;
-    }
-
-    /**
-     * @return the detail (suffix) of the package after the official segments
-     *         specified by the architecture. Will be the
-     *         empty {@link String} if not present.
-     */
-    public String getDetail() {
-        String detail = "";
-        if (this.detail != null && this.detail != "") {
-            detail = this.detail.substring(0, this.detail.length() - 1);
-        }
-        return detail;
-    }
-
-    @Override
-    public String toString() {
-
-        return this.packageName;
-    }
-
-    public static PackageStructure of(String source) {
-
-        String root = "";
-        boolean valid = false;
-        String component = "";
-        String layer = "";
-        String scope = "";
-        String detail = "";
-        Matcher matcher = PATTERN.matcher(source);
-        int i = 1;
-        if (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
-            if (start >= 1) {
-                root = source.substring(0, start - 1);
-                int segments = countChars(root, '.'); // segments = #dots + 1
-                if (segments >= MINIMUM_ROOT_SEGMENTS) {
-                    if (end == source.length()) {
-                        valid = true;
-                        int groupCount = matcher.groupCount();
-                        for (String group : DEFAULT_GROUPS) {
-                            if (i > groupCount) {
-                                LOGGER.log(Level.WARNING,
-                                        "The package '" + source
-                                                + "' contains more groups than declared in your architecture.json.");
-                                break;
-                            }
-                            String value = matcher.group(i);
-                            switch (group) {
-                                case GROUP_LAYER:
-                                    layer = value;
-                                    break;
-                                case GROUP_COMPONENT:
-                                    component = value;
-                                    break;
-                                case GROUP_SCOPE:
-                                    scope = value;
-                                    break;
-                                case GROUP_DETAIL:
-                                    detail = value;
-                                    break;
-                                case GROUP_IGNORE:
-                                    break;
-                                default:
-                                    LOGGER.log(Level.WARNING, "The group '" + group + "' is unknown.");
-                            }
-                            i++;
-                        }
-                    }
-                }
-            }
-        }
-        return new PackageStructure(source, valid, root, component, layer, scope, detail);
-    }
-
-    public static PackageStructure of(JavaClass sourceClass) {
-        String fullyQualifiedName = sourceClass.getFullName();
-        return of(fullyQualifiedName);
-    }
-
-    private static int countChars(String string, char c) {
-
-        int count = 0;
-        int i = 0;
-        while (i >= 0) {
-            i = string.indexOf(c, i);
-            count++;
-            if (i >= 0) {
-                i++;
-            }
-        }
-        return count;
-    }
-
+    return s;
+  }
 }
