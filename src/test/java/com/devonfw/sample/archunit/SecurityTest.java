@@ -59,7 +59,7 @@ public class SecurityTest {
                             "constraint from javax.annotation.security");
 
     /**
-     * Checks if these methods from the javax.persistence.Entitymanager are being used
+     * Checks if these methods are being used
      * Query createQuery(String qlString)
      * <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass)
      * Query createNativeQuery(String sqlString)
@@ -67,7 +67,7 @@ public class SecurityTest {
      * Query createNativeQuery(String sqlString, String resultSetMapping)
      */
     @ArchTest
-    private static final ArchRule shouldnTUseCreateQuery = noClasses().should().callMethodWhere(new DescribedPredicate<JavaMethodCall>("test if used") {
+    private static final ArchRule shouldnTUseCreateQuery = noClasses().should().callMethodWhere(new DescribedPredicate<JavaMethodCall>("test whether CreateQuery or CreateNativQuery is used") {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
                         if(javaMethod.getName().equals("createQuery")){
