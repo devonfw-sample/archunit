@@ -14,7 +14,8 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 /**
  * JUnit test that validates the security rules of this application.
  */
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packages = {"com.devonfw.sample.archunitviolations", "com.devonfw.sample.archunit"},
+        importOptions = ImportOption.DoNotIncludeTests.class)
 public class SecurityTest {
 
     /**
