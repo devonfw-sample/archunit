@@ -102,6 +102,13 @@
       <version>${querydsl.version}</version>
     </dependency>
 
+    <!-- Dependency for Third-Party E2 violation -->
+    <dependency>
+	    <groupId>com.mysema.querydsl</groupId>
+	    <artifactId>querydsl-jpa</artifactId>
+	    <version>3.2.4</version>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>io.quarkus</groupId>
