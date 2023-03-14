@@ -38,6 +38,8 @@ public class PackageStructure {
   /** The {@link #getScope() scope} {@value} */
   public static final String SCOPE_IMPLEMENTATION = "impl";
 
+  public static final String DEFAULT_COMPONENT = "general";
+
   private final String packageName;
 
   private final boolean valid;
@@ -150,6 +152,14 @@ public class PackageStructure {
   public boolean hasSameComponent(PackageStructure otherPkg) {
 
     return getComponent().equals(otherPkg.getComponent());
+  }
+
+  /**
+   * @return {@code true} if this is the default architecture component.
+   */
+  public boolean isComponentGeneral() {
+
+    return getComponent().equals(DEFAULT_COMPONENT);
   }
 
   /**
