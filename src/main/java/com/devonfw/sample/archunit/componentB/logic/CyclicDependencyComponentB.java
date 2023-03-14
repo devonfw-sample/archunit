@@ -1,6 +1,6 @@
-package com.devonfw.sample.archunit.componentB;
+package com.devonfw.sample.archunit.componentB.logic;
 
-import com.devonfw.sample.archunit.componentA.CyclicDependencyComponentA;
+import com.devonfw.sample.archunit.componentA.logic.CyclicDependencyComponentA;
 
 //violation of avoid cyclic dependencies
 public class CyclicDependencyComponentB {

@@ -13,7 +13,7 @@ public class AvoidCyclicDependenciesTest {
     @ArchTest
     static final ArchRule no_cyclic_dependencies_are_allowed =
     slices()
-        .matching("..archunit.(*)..")
+        .matching("..(*).(common|service|logic|dataaccess|batch|client)..")
         .namingSlices("$1 slice")
         .should()
         .beFreeOfCycles()
