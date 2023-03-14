@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.devonfw.sample.archunit.general.dataaccess.ApplicationPersistenceEntity;
+import com.devonfw.sample.archunit.general.logic.AbstractUc;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -26,7 +27,7 @@ import java.lang.reflect.Type;
 /**
  * JUnit test that validates the naming convention rules of this application.
  */
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packages = "com.devonfw.sample.archunitviolations", importOptions = ImportOption.DoNotIncludeTests.class)
 public class NamingConventionTest {
 
   /**
@@ -133,5 +134,18 @@ public class NamingConventionTest {
   private static final ArchRule N5DevonNamingConventionUcCheck = classes().that().areAssignableTo(AbstractUc.class)
       .and().doNotHaveModifier(JavaModifier.ABSTRACT).should().haveSimpleNameStartingWith("Uc")
       .because("Classes extending AbstractUc must follow the naming convention by starting with 'Uc'.");
+
+    /**
+     * DevonNamingConventionCheck N5 verifying that non-abstract classes inherited from AbstractUc are following the
+     * devonfw naming convention by beginning with 'Uc' and ending with 'Impl'. They must also implement an interface
+     * with the same name except for the suffix 'Impl'.
+     */
+    @ArchTest
+    private static final ArchRule N5DevonNamingConventionUcCheck =
+            classes()
+                    .that().areAssignableTo(AbstractUc.class)
+                    .and().doNotHaveSimpleName("AbstractUc")
+                    .should().haveSimpleNameStartingWith("Uc")
+                    .because("Classes extending AbstractUc must follow the naming convention by starting with 'Uc'.");
 
 }
