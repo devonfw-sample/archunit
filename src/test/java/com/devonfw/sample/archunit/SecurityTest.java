@@ -2,6 +2,7 @@ package com.devonfw.sample.archunit;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaMethodCall;
+import com.tngtech.archunit.core.domain.JavaType;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -11,13 +12,10 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
-
-import javax.persistence.EntityManager;
 
 /**
  * JUnit test that validates the security rules of this application.
@@ -25,24 +23,6 @@ import javax.persistence.EntityManager;
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class SecurityTest {
 
-        /*Parameters */
-        private static final String STRING_CLASS = "[JavaClass{name='java.lang.String'}, JavaClass{name='java.lang.Class'}]";
-        private static final String STRING = "[JavaClass{name='java.lang.String'}]";
-        private static final String STRING_STRING = "[JavaClass{name='java.lang.String'}, JavaClass{name='java.lang.String'}]";
-
-        /*Patterns */
-
-        private static final String PARAMETER_CREATEQUERY =
-        //..1...............2
-        STRING + "|" +STRING_CLASS ;
-
-        private static final String PARAMETER_CREATENATIVEQUERY =      
-        // .1.............2.................3
-        STRING +"|"+ STRING_CLASS +"|"+ STRING_STRING;
-
-        static final Pattern PARAMETER_PATERN_CQ = Pattern.compile(PARAMETER_CREATEQUERY);
-        static final Pattern PARAM_PATTERN_CNQ = Pattern.compile(PARAMETER_CREATENATIVEQUERY);
-        
     /**
      * Checks 'Uc*Impl' classes for public methods.
      * Fails if a method is neither annotated with @PermitAll, @RolesAllowed nor @DenyAll.
@@ -71,14 +51,37 @@ public class SecurityTest {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
                         if(javaMethod.getName().equals("createQuery")){
-                                System.out.println(javaMethod.getTarget().getParameterTypes());
-                                Matcher matcherCQ = PARAMETER_PATERN_CQ.matcher(javaMethod.getTarget().getParameterTypes().toString());
-                                return matcherCQ.find();
-                        }else if(javaMethod.getName() == "createNativQuery"){
-                                Matcher matcherCNQ = PARAM_PATTERN_CNQ.matcher(javaMethod.getTarget().getParameterTypes().toString());
-                                return matcherCNQ.find();
+                                List<JavaType> parameters = javaMethod.getTarget().getParameterTypes();
+                                return createQueryParameterCheck(parameters);
+                        }else if(javaMethod.getName().equals("createNativeQuery")){
+                                List<JavaType> parameters = javaMethod.getTarget().getParameterTypes();
+                                return createNativeQueryParameterCheck(parameters);
                         }                        
                 return false;                        
             }
-     });            
+
+            public boolean stringParameterCheck(List<JavaType> parameters){
+                       return( parameters.get(0).getName().equals(String.class.getName())&&
+                                parameters.size() == 1);}
+            
+            public boolean stringClassParameterCheck(List<JavaType> parameters){
+                        return( parameters.get(0).getName().equals(String.class.getName())&&
+                                parameters.get(1).getName().equals(Class.class.getName())&&
+                                parameters.size()== 2 );}
+        
+            public boolean createQueryParameterCheck(List<JavaType> parameters){
+                if (stringParameterCheck(parameters) || stringClassParameterCheck(parameters)) return true;
+                return false;}           
+            
+            public boolean doubleStringParameterCheck(List<JavaType> parameters){
+                return( parameters.get(0).getName().equals(String.class.getName())&&
+                        parameters.get(1).getName().equals(String.class.getName())&&
+                        parameters.size()== 2);}
+        
+           public boolean createNativeQueryParameterCheck(List<JavaType> parameters){
+                if(stringParameterCheck(parameters) || stringClassParameterCheck(parameters) || doubleStringParameterCheck(parameters)) return true;
+                return false;}
+
+      
+        });            
 }
