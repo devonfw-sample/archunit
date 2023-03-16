@@ -51,35 +51,14 @@ public class SecurityTest {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
                         if(javaMethod.getName().equals("createQuery")){
-                                List<JavaType> parameters = javaMethod.getTarget().getParameterTypes();
-                                return createQueryParameterCheck(parameters);
+                                return createQueryParameterCheck(javaMethod.getTarget().getParameterTypes());
                         }else if(javaMethod.getName().equals("createNativeQuery")){
-                                List<JavaType> parameters = javaMethod.getTarget().getParameterTypes();
-                                return createNativeQueryParameterCheck(parameters);
+                                return true;
                         }                        
                 return false;                        
             }
-
-            public boolean stringParameterCheck(List<JavaType> parameters){
-                        return( parameters.size() == 1&&
-                                parameters.get(0).getName().equals(String.class.getName()));}
-            
-            public boolean stringClassParameterCheck(List<JavaType> parameters){
-                        return( parameters.size()== 2 &&
-                                parameters.get(0).getName().equals(String.class.getName())&&
-                                parameters.get(1).getName().equals(Class.class.getName()));}
-        
             public boolean createQueryParameterCheck(List<JavaType> parameters){
-                        if (stringParameterCheck(parameters) || stringClassParameterCheck(parameters)) return true;
-                        return false;}           
-            
-            public boolean doubleStringParameterCheck(List<JavaType> parameters){
-                        return( parameters.size()== 2 &&
-                                parameters.get(0).getName().equals(String.class.getName())&&
-                                parameters.get(1).getName().equals(String.class.getName()));}
-        
-           public boolean createNativeQueryParameterCheck(List<JavaType> parameters){
-                        if(stringParameterCheck(parameters) || stringClassParameterCheck(parameters) || doubleStringParameterCheck(parameters)) return true;
-                        return false;}
+                return(!parameters.isEmpty() &&
+                        parameters.get(0).getName().equals(String.class.getName()));}
         });            
 }
