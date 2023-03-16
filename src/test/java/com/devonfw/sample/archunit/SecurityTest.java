@@ -51,13 +51,13 @@ public class SecurityTest {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
                         if(javaMethod.getName().equals("createQuery")){
-                                return createQueryParameterCheck(javaMethod.getTarget().getParameterTypes());
+                                return parameterCheck(javaMethod.getTarget().getParameterTypes());
                         }else if(javaMethod.getName().equals("createNativeQuery")){
-                                return true;
+                                return parameterCheck(javaMethod.getTarget().getParameterTypes());
                         }                        
                 return false;                        
             }
-            public boolean createQueryParameterCheck(List<JavaType> parameters){
+            public boolean parameterCheck(List<JavaType> parameters){
                 return(!parameters.isEmpty() &&
                         parameters.get(0).getName().equals(String.class.getName()));}
         });            
