@@ -2,6 +2,7 @@ package com.devonfw.sample.archunit;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -15,34 +16,149 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ComponentRuleTest {
 
-  public static final ArchCondition<JavaClass> haveComponentServiceLayerDependingOnDiffComponentsServiceLayer = new ArchCondition<JavaClass>(
-      "have dependencies, towards another components service layer (Rule-C3).") {
+  private static DescribedPredicate<JavaClass> resideInServiceLayerOfAComponent = new DescribedPredicate<JavaClass>(
+      "lie inside the service layer of a custom component different from the business architectures default general component") {
+    @Override
+    public boolean test(JavaClass input) {
+
+      PackageStructure inputPkg = PackageStructure.of(input);
+      boolean someCustomComponentServiceClass = inputPkg.isLayerService() && !inputPkg.isComponentGeneral()
+          && inputPkg.isValid();
+      return someCustomComponentServiceClass;
+    }
+  };
+
+  private static DescribedPredicate<JavaClass> resideInLogicLayerOfAComponent = new DescribedPredicate<JavaClass>(
+      "lie inside the logic layer of a custom component different from the business architectures default general component") {
+    @Override
+    public boolean test(JavaClass input) {
+
+      PackageStructure inputPkg = PackageStructure.of(input);
+      boolean someCustomComponentLogicClass = inputPkg.isLayerLogic() && !inputPkg.isComponentGeneral()
+          && inputPkg.isValid();
+      return someCustomComponentLogicClass;
+    }
+  };
+
+  private static DescribedPredicate<JavaClass> resideInDataaccessLayerOfAComponent = new DescribedPredicate<JavaClass>(
+      "lie inside the dataaccess layer of a custom component different from the business architectures default general component") {
+    @Override
+    public boolean test(JavaClass input) {
+
+      PackageStructure inputPkg = PackageStructure.of(input);
+      boolean someCustomComponentDataaccessClass = inputPkg.isLayerDataAccess() && !inputPkg.isComponentGeneral()
+          && inputPkg.isValid();
+      return someCustomComponentDataaccessClass;
+    }
+  };
+
+  private static DescribedPredicate<JavaClass> resideInBatchLayerOfAComponent = new DescribedPredicate<JavaClass>(
+      "lie inside the batch layer of a custom component different from the business architectures default general component") {
+    @Override
+    public boolean test(JavaClass input) {
+
+      PackageStructure inputPkg = PackageStructure.of(input);
+      boolean someCustomComponentBatchClass = inputPkg.isLayerBatch() && !inputPkg.isComponentGeneral()
+          && inputPkg.isValid();
+      return someCustomComponentBatchClass;
+    }
+  };
+
+  private static DescribedPredicate<JavaClass> resideInTheGeneralProjectComponent = new DescribedPredicate<JavaClass>(
+      "lie inside the business architectures default general component") {
+    @Override
+    public boolean test(JavaClass input) {
+
+      PackageStructure inputPkg = PackageStructure.of(input);
+      boolean someGeneralComponentClass = inputPkg.isComponentGeneral() && inputPkg.isValid();
+      return someGeneralComponentClass;
+    }
+  };
+
+  public static final ArchCondition<JavaClass> dependOnDiffCustomComponents = new ArchCondition<JavaClass>(
+      "depend on a different custom component") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
 
       PackageStructure sourcePkg = PackageStructure.of(sourceClass);
-      String sourceClassLayer = sourcePkg.getLayer();
-      String sourceClassComponent = sourcePkg.getComponent();
 
-      // Check all project components' service layers except the default component for noncompliant dependencies towards
-      // other components' service layers.
-      if (sourcePkg.isLayerService() && !sourcePkg.isComponentGeneral()) {
-        for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
+      // Check for noncompliant dependencies towards other custom components'.
+      for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
 
-          JavaClass targetClass = dependency.getTargetClass();
-          PackageStructure targetPkg = PackageStructure.of(targetClass);
-          String targetClassComponent = targetPkg.getComponent();
-          String targetClassLayer = targetPkg.getLayer();
-          boolean isAllowedDependency = isComponentServiceLayerCompliantTowardsComponenetsServiceLayer(sourcePkg,
-              targetPkg);
+        JavaClass targetClass = dependency.getTargetClass();
+        PackageStructure targetPkg = PackageStructure.of(targetClass);
+        boolean isAllowedDependency = isDependingOnAnotherCustomComponent(sourcePkg, targetPkg);
 
-          if (targetPkg.isLayerService() && !isAllowedDependency) {
-            String message = String.format(
-                "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
-                sourceClassLayer, targetClassComponent, targetClassLayer, sourceClass.getDescription(),
-                targetClass.getDescription());
-            events.add(new SimpleConditionEvent(sourceClass, true, message));
-          }
+        if (!isAllowedDependency) {
+          String message = composeViolationMessage(sourceClass, targetClass, sourcePkg, targetPkg);
+          events.add(new SimpleConditionEvent(sourceClass, true, message));
+        }
+      }
+    }
+  };
+
+  public static final ArchCondition<JavaClass> dependOnDiffComponentsServiceLayerClasses = new ArchCondition<JavaClass>(
+      "depend on the service layer of a different custom component") {
+    @Override
+    public void check(JavaClass sourceClass, ConditionEvents events) {
+
+      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
+
+      // Check for noncompliant dependencies towards other components' service layers.
+      for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
+
+        JavaClass targetClass = dependency.getTargetClass();
+        PackageStructure targetPkg = PackageStructure.of(targetClass);
+        boolean isAllowedDependency = isDependingOnAnotherComponentsServiceLayer(sourcePkg, targetPkg);
+
+        if (!isAllowedDependency) {
+          String message = composeViolationMessage(sourceClass, targetClass, sourcePkg, targetPkg);
+          events.add(new SimpleConditionEvent(sourceClass, true, message));
+        }
+      }
+    }
+  };
+
+  public static final ArchCondition<JavaClass> dependOnDiffComponentsLogicLayer = new ArchCondition<JavaClass>(
+      "depend on the logic layer of a different custom component") {
+    @Override
+    public void check(JavaClass sourceClass, ConditionEvents events) {
+
+      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
+
+      // Check for noncompliant dependencies towards other components' logic layers.
+      for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
+
+        JavaClass targetClass = dependency.getTargetClass();
+        PackageStructure targetPkg = PackageStructure.of(targetClass);
+        boolean isAllowedDependency = isDependingOnAnotherComponentsLogicLayer(sourcePkg, targetPkg);
+
+        if (!isAllowedDependency) {
+          String message = composeViolationMessage(sourceClass, targetClass, sourcePkg, targetPkg);
+          events.add(new SimpleConditionEvent(sourceClass, true, message));
+        }
+      }
+    }
+  };
+
+  public static final ArchCondition<JavaClass> dependOnDiffComponentsDataaccessLayer = new ArchCondition<JavaClass>(
+      "depend on the dataacces layer of a different custom component") {
+    @Override
+    public void check(JavaClass sourceClass, ConditionEvents events) {
+
+      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
+
+      // Check for noncompliant dependencies towards other components' dataaccess
+      // layers.
+      for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
+
+        JavaClass targetClass = dependency.getTargetClass();
+        PackageStructure targetPkg = PackageStructure.of(targetClass);
+        boolean isAllowedDependency = isDependingOnAnotherComponentsDataaccessLayer(sourcePkg, targetPkg);
+
+        if (!isAllowedDependency) {
+          String message = composeViolationMessage(sourceClass, targetClass, sourcePkg, targetPkg);
+          events.add(new SimpleConditionEvent(sourceClass, true, message));
         }
       }
     }
@@ -52,277 +168,117 @@ public class ComponentRuleTest {
    * verifying that the service layer of one component does not depend on the service layer of another component.
    */
   @ArchTest
-  public static final ArchRule C3_no_service_layer_depends_on_service_layer_of_another_component = noClasses()
-      .should(haveComponentServiceLayerDependingOnDiffComponentsServiceLayer)
+  public static final ArchRule noComponentsServiceLayerDependsOnTheServiceLayerOfAnotherComponent = noClasses()
+      .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsServiceLayerClasses)
       .as("Code from service layer of a component shall not depend on service layer of a different component.")
       .allowEmptyShould(true);
-
-  public static final ArchCondition<JavaClass> haveComponentServiceLayerDependingOnDiffComponentsLogicLayer = new ArchCondition<JavaClass>(
-      "have dependencies, towards another components logic layer (Rule-C4).") {
-    @Override
-    public void check(JavaClass sourceClass, ConditionEvents events) {
-
-      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
-      String sourceClassLayer = sourcePkg.getLayer();
-      String sourceClassComponent = sourcePkg.getComponent();
-
-      // Check all project components' service layers except the default component for noncompliant dependencies towards
-      // other components' logic layers.
-      if (sourcePkg.isLayerService() && !sourcePkg.isComponentGeneral()) {
-        for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
-
-          JavaClass targetClass = dependency.getTargetClass();
-          PackageStructure targetPkg = PackageStructure.of(targetClass);
-          String targetClassComponent = targetPkg.getComponent();
-          String targetClassLayer = targetPkg.getLayer();
-          boolean isAllowedDependency = isComponentServiceLayerCompliantTowardsComponentsLogicLayer(sourcePkg,
-              targetPkg);
-
-          if (targetPkg.isLayerLogic() && !isAllowedDependency) {
-            String message = String.format(
-                "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
-                sourceClassLayer, targetClassComponent, targetClassLayer, sourceClass.getDescription(),
-                targetClass.getDescription());
-            events.add(new SimpleConditionEvent(sourceClass, true, message));
-          }
-        }
-      }
-    }
-  };
 
   /**
    * verifying that the service layer of one component does not depend on the logic layer of another component.
    */
   @ArchTest
-  public static final ArchRule C4_no_dependencies_from_a_components_service_layer_to_anothers_component_logic_layer = noClasses()
-      .should(haveComponentServiceLayerDependingOnDiffComponentsLogicLayer)
+  public static final ArchRule noComponentsServiceLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
+      .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
       .as("Code from service layer of a component shall not depend on logic layer of a different component.")
       .allowEmptyShould(true);
-
-  public static final ArchCondition<JavaClass> haveComponentLogicLayerDependingOnDiffComponentsDataaccessLayer = new ArchCondition<JavaClass>(
-      "have dependencies, towards another components dataaccess layer (Rule-C5).") {
-    @Override
-    public void check(JavaClass sourceClass, ConditionEvents events) {
-
-      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
-      String sourceClassLayer = sourcePkg.getLayer();
-      String sourceClassComponent = sourcePkg.getComponent();
-
-      // Check all project components' logic layers except the default component for noncompliant dependencies towards
-      // other components' dataaccess layers.
-      if (sourcePkg.isLayerLogic() && !sourcePkg.isComponentGeneral()) {
-        for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
-
-          JavaClass targetClass = dependency.getTargetClass();
-          PackageStructure targetPkg = PackageStructure.of(targetClass);
-          String targetClassComponent = targetPkg.getComponent();
-          String targetClassLayer = targetPkg.getLayer();
-          boolean isAllowedDependency = isComponentLogicLayerCompliant(sourcePkg, targetPkg);
-
-          if (targetPkg.isLayerDataAccess() && !isAllowedDependency) {
-            String message = String.format(
-                "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
-                sourceClassLayer, targetClassComponent, targetClassLayer, sourceClass.getDescription(),
-                targetClass.getDescription());
-            events.add(new SimpleConditionEvent(sourceClass, true, message));
-          }
-        }
-      }
-    }
-  };
 
   /**
    * verifying that the logic layer of a component may not depend on the dataaccess layer of another component.
    */
   @ArchTest
-  public static final ArchRule C5_no_dependencies_from_a_components_logic_layer_to_anothers_component_dataaccess_layer = noClasses()
-      .should(haveComponentLogicLayerDependingOnDiffComponentsDataaccessLayer)
+  public static final ArchRule noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
+      .that(resideInLogicLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
       .as("Code from logic layer of a component shall not depend on dataaccess layer of a different component.")
       .allowEmptyShould(true);
-
-  public static final ArchCondition<JavaClass> haveComponentDataaccessLayerDependingOnDiffComponentsDataaccessLayer = new ArchCondition<JavaClass>(
-      "have dependencies, towards another dataaccess layer (Rule-C6).") {
-    @Override
-    public void check(JavaClass sourceClass, ConditionEvents events) {
-
-      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
-      String sourceClassLayer = sourcePkg.getLayer();
-      String sourceClassComponent = sourcePkg.getComponent();
-
-      // Check all project components' dataaccess layers except the default component for noncompliant dependencies
-      // towards
-      // other components' dataaccess layers.
-      if (sourcePkg.isLayerDataAccess() && !sourcePkg.isComponentGeneral()) {
-        for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
-
-          JavaClass targetClass = dependency.getTargetClass();
-          PackageStructure targetPkg = PackageStructure.of(targetClass);
-          String targetClassComponent = targetPkg.getComponent();
-          String targetClassLayer = targetPkg.getLayer();
-          boolean isAllowedDependency = isComponentDataaccessLayerCompliant(sourcePkg, targetPkg);
-
-          if (targetPkg.isLayerDataAccess() && !isAllowedDependency) {
-            String message = String.format(
-                "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
-                sourceClassLayer, targetClassComponent, targetClassLayer, sourceClass.getDescription(),
-                targetClass.getDescription());
-            events.add(new SimpleConditionEvent(sourceClass, true, message));
-          }
-        }
-      }
-    }
-  };
 
   // medium severity
   /**
    * verifying that the dataaccess layer of one component does not depend on the dataaccess layer of another component.
    */
   @ArchTest
-  public static final ArchRule C6_no_dataaccess_layer_depends_on_dataaccess_layer_of_another_component = noClasses()
-      .should(haveComponentDataaccessLayerDependingOnDiffComponentsDataaccessLayer)
-      .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component")
+  public static final ArchRule noComponentsDataaccessLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
+      .that(resideInDataaccessLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
+      .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component.")
       .allowEmptyShould(true);
-
-  public static final ArchCondition<JavaClass> haveComponentBatchLayerDependingOnDiffComponentsLogicLayer = new ArchCondition<JavaClass>(
-      "have dependencies, towards another components logic layer (Rule-C7).") {
-    @Override
-    public void check(JavaClass sourceClass, ConditionEvents events) {
-
-      PackageStructure sourcePkg = PackageStructure.of(sourceClass);
-      String sourceClassLayer = sourcePkg.getLayer();
-      String sourceClassComponent = sourcePkg.getComponent();
-
-      // Check all project components' batch layers except the default component for noncompliant dependencies
-      // towards
-      // other components' logic layers.
-      if (sourcePkg.isLayerBatch() && !sourcePkg.isComponentGeneral()) {
-        for (Dependency dependency : sourceClass.getDirectDependenciesFromSelf()) {
-
-          JavaClass targetClass = dependency.getTargetClass();
-          PackageStructure targetPkg = PackageStructure.of(targetClass);
-          String targetClassComponent = targetPkg.getComponent();
-          String targetClassLayer = targetPkg.getLayer();
-          boolean isAllowedDependency = isComponentBatchLayerCompliant(sourcePkg, targetPkg);
-
-          if (targetPkg.isLayerLogic() && !isAllowedDependency) {
-            String message = String.format(
-                "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourceClassComponent,
-                sourceClassLayer, targetClassComponent, targetClassLayer, sourceClass.getDescription(),
-                targetClass.getDescription());
-            events.add(new SimpleConditionEvent(sourceClass, true, message));
-          }
-        }
-      }
-    }
-  };
 
   /**
    * verifying that the batch layer of a component may not depend on the logic layer of another component.
    */
   @ArchTest
-  public static final ArchRule C7_no_dependencies_from_a_components_batch_layer_to_anothers_component_logic_layer = noClasses()
-      .should(haveComponentBatchLayerDependingOnDiffComponentsLogicLayer)
+  public static final ArchRule noComponentsBatchLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
+      .that(resideInBatchLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
       .as("Code from batch layer of a component shall not depend on logic layer of a different component.")
       .allowEmptyShould(true);
 
   /**
-   * Dependency of a components batch layer towards the same components logic or common layer is allowed. In addition a
-   * dependency towards the projects default component is allowed too.
+   * verifying that the business architectures default general component does not depend on any other component.
    */
-  private static boolean isComponentBatchLayerCompliant(PackageStructure sourcePkg, PackageStructure targetPkg) {
+  @ArchTest
+  public static ArchRule theDefaultProjectComponentDoesNotDependOnAnyOtherComponent = noClasses()
+      .that(resideInTheGeneralProjectComponent).should(dependOnDiffCustomComponents)
+      .as("Code from the business architecture general component must not depend on any other component.")
+      .allowEmptyShould(true);
 
-    boolean isAllowed = false;
-    // Components batch layer can depend on their own lower layers: logic and
-    // common.
-    if (sourcePkg.hasSameComponent(targetPkg) && (targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
+  private static boolean isDependingOnAnotherCustomComponent(PackageStructure sourcePkg, PackageStructure targetPkg) {
+
+    boolean isAllowed = true;
+    if (isDifferentCustomComponent(sourcePkg, targetPkg)) {
+      isAllowed = false;
     }
-    // Components may always depend on the default business component.
-    if (targetPkg.isComponentGeneral() && (targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
+    return isAllowed;
+  }
+
+  private static boolean isDependingOnAnotherComponentsDataaccessLayer(PackageStructure sourcePkg,
+      PackageStructure targetPkg) {
+
+    boolean isAllowed = true;
+    if (isDifferentCustomComponent(sourcePkg, targetPkg) && targetPkg.isLayerDataAccess()) {
+      isAllowed = false;
+    }
+    return isAllowed;
+  }
+
+  private static boolean isDependingOnAnotherComponentsLogicLayer(PackageStructure sourcePkg,
+      PackageStructure targetPkg) {
+
+    boolean isAllowed = true;
+    if (isDifferentCustomComponent(sourcePkg, targetPkg) && targetPkg.isLayerLogic()) {
+      isAllowed = false;
+    }
+    return isAllowed;
+  }
+
+  private static boolean isDependingOnAnotherComponentsServiceLayer(PackageStructure sourcePkg,
+      PackageStructure targetPkg) {
+
+    boolean isAllowed = true;
+    if (isDifferentCustomComponent(sourcePkg, targetPkg) && targetPkg.isLayerService()) {
+      isAllowed = false;
     }
     return isAllowed;
   }
 
   /**
-   * Dependency of a components dataaccess layer towards the same components common layer is allowed. In addition a
-   * dependency towards the projects default component is allowed too.
-   */
-  private static boolean isComponentDataaccessLayerCompliant(PackageStructure sourcePkg, PackageStructure targetPkg) {
-
-    boolean isAllowed = false;
-    // Components dataaccess layer can depend on their own dataaccess and common layer.
-    if (sourcePkg.hasSameComponent(targetPkg) && (targetPkg.isLayerDataAccess() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    // Components may always depend on the default business component.
-    if (targetPkg.isComponentGeneral() && (targetPkg.isLayerDataAccess() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    return isAllowed;
-  }
-
-  /**
-   * Dependency of a components logic layer towards the same components dataaccess or common layer is allowed. In
-   * addition a dependency towards the projects default component is allowed too.
-   */
-  private static boolean isComponentLogicLayerCompliant(PackageStructure sourcePkg, PackageStructure targetPkg) {
-
-    boolean isAllowed = false;
-    // Components logic layer can depend on their own lower layers: dataaccess and
-    // common.
-    if (sourcePkg.hasSameComponent(targetPkg) && (targetPkg.isLayerDataAccess() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    // Components may always depend on the default business component.
-    if (targetPkg.isComponentGeneral() && (targetPkg.isLayerDataAccess() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    return isAllowed;
-  }
-
-  /**
-   * Dependency of a components service layer towards the same components logic or common layer is allowed. In addition
-   * a dependency towards the projects default component is allowed too.
+   * Check whether the given PackageStructures do not share the same component name and if the target package is not the
+   * default component.
    *
-   * @param sourceClass Source JavaClass to check if dependencies from itself towards targetClass are allowed.
-   * @param targetClass Target JavaClass to check if dependencies from sourceClass towards it are allowed.
+   * @param sourcePkg
+   * @param targetPkg
+   * @return Return {@code true} if the given {@code targetPkg} is not the default {@link PackageStructure} "general"
+   *         component and both of the parameters do not belong to the same component. Otherwise, return {@code false}.
    */
-  private static boolean isComponentServiceLayerCompliantTowardsComponentsLogicLayer(PackageStructure sourcePkg,
-      PackageStructure targetPkg) {
+  private static boolean isDifferentCustomComponent(PackageStructure sourcePkg, PackageStructure targetPkg) {
 
-    boolean isAllowed = false;
-    // Components service layer can depend on their own lower layers: logic and
-    // common.
-    if (sourcePkg.hasSameComponent(targetPkg) && (targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    // Components may always depend on the default business component.
-    if (targetPkg.isComponentGeneral() && (targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    return isAllowed;
+    return !sourcePkg.hasSameComponent(targetPkg) && !targetPkg.isComponentGeneral() && targetPkg.isValid();
   }
 
-  /**
-   * Dependency of a components service layer towards the same components logic and common layer is allowed. In addition
-   * a dependency towards the projects default component is allowed too.
-   */
-  private static boolean isComponentServiceLayerCompliantTowardsComponenetsServiceLayer(PackageStructure sourcePkg,
-      PackageStructure targetPkg) {
+  private static String composeViolationMessage(JavaClass sourceClass, JavaClass targetClass,
+      PackageStructure sourcePkg, PackageStructure targetPkg) {
 
-    boolean isAllowed = false;
-    // Components service layer can depend on their own logic and common layer.
-    if (sourcePkg.hasSameComponent(targetPkg)
-        && (targetPkg.isLayerService() || targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    // Components may always depend on the default business component.
-    if (targetPkg.isComponentGeneral()
-        && (targetPkg.isLayerService() || targetPkg.isLayerLogic() || targetPkg.isLayerCommon())) {
-      isAllowed = true;
-    }
-    return isAllowed;
+    String violationMessage = String.format(
+        "'%s.%s' is dependend on '%s.%s'. Violated in: (%s). Dependency towards (%s)", sourcePkg.getComponent(),
+        sourcePkg.getLayer(), targetPkg.getComponent(), targetPkg.getLayer(), sourceClass.getDescription(),
+        targetClass.getDescription());
+    return violationMessage;
   }
-
 }
