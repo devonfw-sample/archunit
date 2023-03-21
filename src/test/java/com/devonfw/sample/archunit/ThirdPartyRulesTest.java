@@ -43,9 +43,6 @@ public class ThirdPartyRulesTest {
       .resideInAPackage("com.mysema.query..")
       .because("Use official QueryDSL (com.querydsl.* e.g. from com.querydsl:querydsl-jpa).");
 
-  /*
-   * E1
-   */
   private static boolean isApiScopedClassUsingTransactional(JavaClass source, String targetPackageFullName) {
 
     PackageStructure sourcePkg = PackageStructure.of(source);
@@ -56,28 +53,14 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  private static boolean isUsingSpringframeworkTransactionalAnnotation(String targetPackageFullName) {
-
-    if (targetPackageFullName.equals("org.springframework.transaction.annotation.Transactional")) {
-      return true;
-    }
-    return false;
-  }
-
-  public static final ArchCondition<JavaClass> misuse_springframework_transactional_annotation = new ArchCondition<JavaClass>(
-      "misuse @Transactional (Rule-E1)") {
+  public static ArchCondition<JavaClass> verifyingTransactionalAnnotationIsNotUsedInsideApi = new ArchCondition<JavaClass>(
+      "use @Transactional in API") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
 
       for (Dependency dependency : source.getDirectDependenciesFromSelf()) {
         String targetFullName = dependency.getTargetClass().getFullName();
         String targetClassDescription = dependency.getDescription();
-        if (isUsingSpringframeworkTransactionalAnnotation(targetFullName) == true) {
-          String message = String.format(
-              "Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+). The use (%s) is discouraged.  Violated in (%s)",
-              targetFullName, targetClassDescription);
-          events.add(new SimpleConditionEvent(source, true, message));
-        }
         /*
          * In case the project has a classic architecture using scopes, check that no API scoped class is using
          * 'javax.transaction.Transactional'
@@ -93,12 +76,14 @@ public class ThirdPartyRulesTest {
   };
 
   @ArchTest
-  public static final ArchRule E1_verifying_proper_transactional_use_from_jee = noClasses()
-      .should(misuse_springframework_transactional_annotation).allowEmptyShould(true);
+  public static ArchRule verifyingSpringframeworkTransactionalIsNotUsed = noClasses().should().dependOnClassesThat()
+      .haveFullyQualifiedName("org.springframework.transaction.annotation.Transactional")
+      .because("Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+).");
 
-  /*
-   * E3
-   */
+  @ArchTest
+  public static ArchRule verifyingProperTransactionalUseFromJee = noClasses()
+      .should(verifyingTransactionalAnnotationIsNotUsedInsideApi).allowEmptyShould(true);
+
   private static boolean isUsingJavaxPersistenceDataAccessOrEmbeddablesInCommon(JavaClass source,
       String targetPackageFullName) {
 
@@ -116,7 +101,7 @@ public class ThirdPartyRulesTest {
   }
 
   public static final ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass>(
-      "use JPA outside of dataaccess layer or embeddables in common layer (Rule-E3)") {
+      "use JPA outside of dataaccess layer or embeddables in common layer") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
 
@@ -134,12 +119,9 @@ public class ThirdPartyRulesTest {
   };
 
   @ArchTest
-  public static final ArchRule E3_verifying_proper_jpa_use = noClasses().should(misuse_jpa).allowEmptyShould(true);
+  public static final ArchRule verifyingProperJpaUse = noClasses().should(misuse_jpa).allowEmptyShould(true);
 
-  /*
-   * E4
-   */
-  private static boolean isUsingHibernateOutsideOfDataaccessLayer(JavaClass source, String targetPackageName) {
+  private static boolean isUsingHibernateOutsideOfDataaccessLayer(JavaClass source) {
 
     PackageStructure sourcePkg = PackageStructure.of(source);
     if (!sourcePkg.isLayerDataAccess()) {
@@ -148,8 +130,10 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  private static boolean isUsingProprietaryHibernateAnnotation(String targetPackageName, String targetSimpleName) {
+  private static boolean isUsingProprietaryHibernateAnnotation(JavaClass targetClass) {
 
+    String targetPackageName = targetClass.getPackageName();
+    String targetSimpleName = targetClass.getSimpleName();
     if (targetPackageName.equals(ORG_HIBERNATE_ANNOTATIONS)
         && DISCOURAGED_HIBERNATE_ANNOTATIONS.contains(targetSimpleName)) {
       return true;
@@ -157,16 +141,18 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  private static boolean isImplementingHibernateEnversInternalsDirectly(String targetPackageName) {
+  private static boolean isImplementingHibernateEnversInternalsDirectly(JavaClass targetClass) {
 
+    String targetPackageName = targetClass.getPackageName();
     if (targetPackageName.startsWith(ORG_HIBERNATE_ENVERS) && targetPackageName.contains("internal")) {
       return true;
     }
     return false;
   }
 
-  private static boolean isUsingHibernateOutsideOfImplScope(JavaClass source, String targetPackageName) {
+  private static boolean isUsingHibernateOutsideOfImplScope(JavaClass source, JavaClass targetClass) {
 
+    String targetPackageName = targetClass.getPackageName();
     PackageStructure sourcePkg = PackageStructure.of(source);
     if (!sourcePkg.isScopeImpl() && targetPackageName.startsWith("org.hibernate")
         && !targetPackageName.startsWith(ORG_HIBERNATE_VALIDATOR)) {
@@ -175,9 +161,11 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  private static boolean isNotImplementingHibernateEnversInImplScope(JavaClass source, String targetPackageName,
-      String targetPackageFullName, String targetSimpleName) {
+  private static boolean isNotImplementingHibernateEnversInImplScope(JavaClass source, JavaClass targetClass) {
 
+    String targetPackageName = targetClass.getPackageName();
+    String targetPackageFullName = targetClass.getFullName();
+    String targetSimpleName = targetClass.getSimpleName();
     PackageStructure sourcePkg = PackageStructure.of(source);
     if (!sourcePkg.isScopeImpl() && targetPackageName.startsWith(ORG_HIBERNATE_ENVERS)
         && (!targetPackageFullName.equals(ORG_HIBERNATE_ENVERS) || targetSimpleName.startsWith("Default")
@@ -187,29 +175,29 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  public static final ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass>(
-      "misuse hibernate (Rule-E4).") {
+  public static final ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass>("misuse hibernate") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
 
       for (Dependency dependency : source.getDirectDependenciesFromSelf()) {
-        String targetPackageName = dependency.getTargetClass().getPackageName();
-        String targetPackageFullName = dependency.getTargetClass().getFullName();
+        JavaClass targetClass = dependency.getTargetClass();
+        String targetPackageName = targetClass.getPackageName();
+        String targetPackageFullName = targetClass.getFullName();
         String targetClassDescription = dependency.getDescription();
-        String targetSimpleName = dependency.getTargetClass().getSimpleName();
+
         if (targetPackageName.startsWith("org.hibernate") && !targetPackageName.startsWith(ORG_HIBERNATE_VALIDATOR)) {
-          if (isUsingHibernateOutsideOfDataaccessLayer(source, targetPackageName) == true) {
+          if (isUsingHibernateOutsideOfDataaccessLayer(source) == true) {
             String message = String.format("Hibernate (%s) should only be used in dataaccess layer. Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
             events.add(new SimpleConditionEvent(source, true, message));
           }
-          if (isUsingProprietaryHibernateAnnotation(targetPackageName, targetSimpleName) == true) {
+          if (isUsingProprietaryHibernateAnnotation(targetClass) == true) {
             String message = String.format(
                 "Standard JPA annotations should be used instead of this proprietary hibernate annotation (%s). Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
             events.add(new SimpleConditionEvent(source, true, message));
           }
-          if (isImplementingHibernateEnversInternalsDirectly(targetPackageName) == true) {
+          if (isImplementingHibernateEnversInternalsDirectly(targetClass) == true) {
             String message = String.format(
                 "Hibernate envers internals (%s) should never be used directly. Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
@@ -220,14 +208,13 @@ public class ThirdPartyRulesTest {
            * utilized inside the impl scope of the dataaccess layer. In addition, Hibernate internals also need to be
            * used inside the impl scope of the dataaccess layer.
            */
-          if (isNotImplementingHibernateEnversInImplScope(source, targetPackageName, targetPackageFullName,
-              targetSimpleName) == true) {
+          if (isNotImplementingHibernateEnversInImplScope(source, targetClass) == true) {
             String message = String.format(
                 "Hibernate envers implementation (%s) should only be used in impl scope of dataaccess layer. Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
             events.add(new SimpleConditionEvent(source, true, message));
           }
-          if (isUsingHibernateOutsideOfImplScope(source, targetPackageName) == true) {
+          if (isUsingHibernateOutsideOfImplScope(source, targetClass) == true) {
             String message = String.format(
                 "Hibernate internals (%s) should only be used in impl scope of dataaccess layer. Violated in (%s)",
                 targetPackageFullName, targetClassDescription);
@@ -239,6 +226,5 @@ public class ThirdPartyRulesTest {
   };
 
   @ArchTest
-  public static final ArchRule E4_jpa_is_used_as_encouraged = noClasses().should(misUseHibernate)
-      .allowEmptyShould(true);
+  public static final ArchRule jpaIsUsedAsEncouraged = noClasses().should(misUseHibernate).allowEmptyShould(true);
 }
