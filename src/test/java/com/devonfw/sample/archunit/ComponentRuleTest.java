@@ -13,7 +13,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packages = {"com.devonfw.sample.archunit","com.devonfw.sample.batch"}, importOptions = ImportOption.DoNotIncludeTests.class)
 public class ComponentRuleTest {
 
   private static DescribedPredicate<JavaClass> resideInServiceLayerOfAComponent = new DescribedPredicate<JavaClass>(
