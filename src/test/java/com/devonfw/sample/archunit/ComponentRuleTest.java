@@ -5,15 +5,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ComponentRuleTest {
 
   private static DescribedPredicate<JavaClass> resideInServiceLayerOfAComponent = new DescribedPredicate<JavaClass>(
@@ -167,7 +163,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the service layer of one component does not depend on the service layer of another component.
    */
-  @ArchTest
   public static final ArchRule noComponentsServiceLayerDependsOnTheServiceLayerOfAnotherComponent = noClasses()
       .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsServiceLayerClasses)
       .as("Code from service layer of a component shall not depend on service layer of a different component.")
@@ -176,7 +171,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the service layer of one component does not depend on the logic layer of another component.
    */
-  @ArchTest
   public static final ArchRule noComponentsServiceLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
       .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
       .as("Code from service layer of a component shall not depend on logic layer of a different component.")
@@ -185,7 +179,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the logic layer of a component may not depend on the dataaccess layer of another component.
    */
-  @ArchTest
   public static final ArchRule noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
       .that(resideInLogicLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
       .as("Code from logic layer of a component shall not depend on dataaccess layer of a different component.")
@@ -195,7 +188,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the dataaccess layer of one component does not depend on the dataaccess layer of another component.
    */
-  @ArchTest
   public static final ArchRule noComponentsDataaccessLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
       .that(resideInDataaccessLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
       .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component.")
@@ -204,7 +196,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the batch layer of a component may not depend on the logic layer of another component.
    */
-  @ArchTest
   public static final ArchRule noComponentsBatchLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
       .that(resideInBatchLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
       .as("Code from batch layer of a component shall not depend on logic layer of a different component.")
@@ -213,7 +204,6 @@ public class ComponentRuleTest {
   /**
    * verifying that the business architectures default general component does not depend on any other component.
    */
-  @ArchTest
   public static ArchRule theDefaultProjectComponentDoesNotDependOnAnyOtherComponent = noClasses()
       .that(resideInTheGeneralProjectComponent).should(dependOnDiffCustomComponents)
       .as("Code from the business architecture general component must not depend on any other component.")

@@ -2,15 +2,10 @@ package com.devonfw.sample.archunit;
 
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class LayerRulesTest {
-  @ArchTest
-  private static final ArchRule shouldOnlyAccessValidLayers = layeredArchitecture().consideringAllDependencies()
+  static final ArchRule shouldOnlyAccessValidLayers = layeredArchitecture().consideringAllDependencies()
       .layer("common").definedBy("..common..")
       .layer("logic").definedBy("..logic..")
       .layer("dataaccess").definedBy("..dataaccess..")

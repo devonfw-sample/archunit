@@ -10,7 +10,6 @@ import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
@@ -27,18 +26,15 @@ public class ThirdPartyRulesTest {
 
   private static final String ORG_HIBERNATE_ANNOTATIONS = "org.hibernate.annotations";
 
-  @ArchTest
   public static ArchRule check_object_dependency = noClasses().should().dependOnClassesThat()
       .haveFullyQualifiedName("com.google.common.base.Objects")
       .because("Use Java standards instead (java.util.Objects).");
 
-  @ArchTest
   public static ArchRule check_converter_dependency = noClasses().should().dependOnClassesThat()
       .haveFullyQualifiedName("javax.persistence.Convert")
       .because("Use the javax.persistence.Converter annotation on a custom converter"
           + " which implements the javax.persistence.AttributeConverter instead of the 'javax.persistance.Convert' annotation");
 
-  @ArchTest
   public static ArchRule check_mysema_dependency = noClasses().should().dependOnClassesThat()
       .resideInAPackage("com.mysema.query..")
       .because("Use official QueryDSL (com.querydsl.* e.g. from com.querydsl:querydsl-jpa).");
@@ -75,12 +71,10 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  @ArchTest
   public static ArchRule verifyingSpringframeworkTransactionalIsNotUsed = noClasses().should().dependOnClassesThat()
       .haveFullyQualifiedName("org.springframework.transaction.annotation.Transactional")
       .because("Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+).");
 
-  @ArchTest
   public static ArchRule verifyingProperTransactionalUseFromJee = noClasses()
       .should(verifyingTransactionalAnnotationIsNotUsedInsideApi).allowEmptyShould(true);
 
@@ -118,7 +112,6 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  @ArchTest
   public static final ArchRule verifyingProperJpaUse = noClasses().should(misuse_jpa).allowEmptyShould(true);
 
   private static boolean isUsingHibernateOutsideOfDataaccessLayer(JavaClass source) {
@@ -225,6 +218,5 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  @ArchTest
   public static final ArchRule jpaIsUsedAsEncouraged = noClasses().should(misUseHibernate).allowEmptyShould(true);
 }
