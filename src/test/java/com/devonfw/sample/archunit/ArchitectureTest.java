@@ -1,11 +1,9 @@
 package com.devonfw.sample.archunit;
 
-import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
-
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.junit.ArchTests;
 
 /**
  * JUnit test that validates the architecture of this application.
@@ -14,22 +12,23 @@ import com.tngtech.archunit.lang.ArchRule;
 public class ArchitectureTest {
 
   @ArchTest
-  private static final ArchRule shouldOnlyAccessValidLayers = //
-      layeredArchitecture().consideringAllDependencies() //      
-      .layer("common").definedBy("..common..") //
-      .layer("logic").definedBy("..logic..") //
-      .layer("dataaccess").definedBy("..dataaccess..") //
-      .layer("service").definedBy("..service..") //
-      .layer("client").definedBy("..client..")
-      .layer("batch").definedBy("..batch..")
+  private final ArchTests CYCLIC_DEPENDENCIES_TEST = ArchTests.in(AvoidCyclicDependenciesTest.class);
 
-      .whereLayer("client").mayNotBeAccessedByAnyLayer()
-      .whereLayer("batch").mayNotBeAccessedByAnyLayer()
-      .whereLayer("service").mayOnlyBeAccessedByLayers("client")
-      .whereLayer("logic").mayOnlyBeAccessedByLayers("service", "batch")
-      .whereLayer("dataaccess").mayOnlyBeAccessedByLayers("logic")
-      .withOptionalLayers(true)
-          .because("Dependency of technical layers violates architecture rules.");
-  // ...
+  @ArchTest
+  private final ArchTests COMPONENT_RULES = ArchTests.in(ComponentRuleTest.class);
 
+  @ArchTest
+  private final ArchTests LAYER_RULES = ArchTests.in(LayerRulesTest.class);
+
+  @ArchTest
+  private final ArchTests NAMING_CONVENTION_RULES = ArchTests.in(NamingConventionTest.class);
+
+  @ArchTest
+  private final ArchTests PACKAGE_RULES = ArchTests.in(PackageRuleTest.class);
+
+  @ArchTest
+  private final ArchTests SECURITY_RULES = ArchTests.in(SecurityTest.class);
+
+  @ArchTest
+  private final ArchTests THIRD_PARTY_RULES = ArchTests.in(ThirdPartyRulesTest.class);
 }
