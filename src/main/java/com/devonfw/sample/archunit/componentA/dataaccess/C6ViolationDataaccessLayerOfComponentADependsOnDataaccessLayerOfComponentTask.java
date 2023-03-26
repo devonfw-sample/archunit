@@ -1,4 +1,4 @@
-package com.devonfw.sample.archunit.componentA.dataaccess;
+package com.devonfw.sample.archunit.componenta.dataaccess;
 
 import com.devonfw.sample.archunit.task.dataaccess.TaskItemEntity;
 
