@@ -1,6 +1,7 @@
 package com.devonfw.sample.archunit;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.priority;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.Priority;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
@@ -39,7 +41,7 @@ public class ThirdPartyRulesTest {
           + " which implements the javax.persistence.AttributeConverter instead of the 'javax.persistance.Convert' annotation");
 
   @ArchTest
-  public static ArchRule check_mysema_dependency = noClasses().should().dependOnClassesThat()
+  public static ArchRule check_mysema_dependency = priority(Priority.HIGH).noClasses().should().dependOnClassesThat()
       .resideInAPackage("com.mysema.query..")
       .because("Use official QueryDSL (com.querydsl.* e.g. from com.querydsl:querydsl-jpa).");
 
@@ -62,7 +64,8 @@ public class ThirdPartyRulesTest {
         String targetFullName = dependency.getTargetClass().getFullName();
         String targetClassDescription = dependency.getDescription();
         /*
-         * In case the project has a classic architecture using scopes, check that no API scoped class is using
+         * In case the project has a classic architecture using scopes, check that no
+         * API scoped class is using
          * 'javax.transaction.Transactional'
          */
         if (isApiScopedClassUsingTransactional(source, targetFullName) == true) {
@@ -204,8 +207,10 @@ public class ThirdPartyRulesTest {
             events.add(new SimpleConditionEvent(source, true, message));
           }
           /*
-           * In case the project has a classic architecture that uses scopes, check that Hibernate.Envers are only
-           * utilized inside the impl scope of the dataaccess layer. In addition, Hibernate internals also need to be
+           * In case the project has a classic architecture that uses scopes, check that
+           * Hibernate.Envers are only
+           * utilized inside the impl scope of the dataaccess layer. In addition,
+           * Hibernate internals also need to be
            * used inside the impl scope of the dataaccess layer.
            */
           if (isNotImplementingHibernateEnversInImplScope(source, targetClass) == true) {

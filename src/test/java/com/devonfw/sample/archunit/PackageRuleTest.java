@@ -1,5 +1,5 @@
 package com.devonfw.sample.archunit;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.priority;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +11,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.Priority;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 /**
@@ -58,7 +59,7 @@ public class PackageRuleTest {
 
   /* ArchRule and Condition */
   @ArchTest
-  public ArchRule shouldHaveValidLayers = classes().should(containsValidPackageStructureCondition());
+  public ArchRule shouldHaveValidLayers = priority(Priority.HIGH).classes().should(containsValidPackageStructureCondition());
 
   private static ArchCondition<JavaClass> containsValidPackageStructureCondition() {
 
