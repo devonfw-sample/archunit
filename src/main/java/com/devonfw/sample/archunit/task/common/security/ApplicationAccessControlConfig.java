@@ -23,13 +23,13 @@ public class ApplicationAccessControlConfig {
   /** Permission to delete a {@link org.example.app.task.common.TaskList}. */
   public static final String PERMISSION_DELETE_TASK_LIST = PREFIX + "DeleteTaskList";
 
-  /** Permission to find a {@link org.example.app.task.common.TaskItem}. */
+  /** Permission to find a {@link org.ViolationItem.app.task.common.TaskItem}. */
   public static final String PERMISSION_FIND_TASK_ITEM = PREFIX + "FindTaskItem";
 
-  /** Permission to save (insert or update) a {@link org.example.app.task.common.TaskItem}. */
+  /** Permission to save (insert or update) a {@link org.ViolationItem.app.task.common.TaskItem}. */
   public static final String PERMISSION_SAVE_TASK_ITEM = PREFIX + "SaveTaskItem";
 
-  /** Permission to delete a {@link org.example.app.task.common.TaskItem}. */
+  /** Permission to delete a {@link org.ViolationItem.app.task.common.TaskItem}. */
   public static final String PERMISSION_DELETE_TASK_ITEM = PREFIX + "DeleteTaskItem";
 
 }
