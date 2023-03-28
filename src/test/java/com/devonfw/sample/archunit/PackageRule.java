@@ -3,8 +3,6 @@ package com.devonfw.sample.archunit;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 import com.tngtech.archunit.core.domain.JavaClass;
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
@@ -13,11 +11,12 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 /**
  * JUnit test that validates the Packages of this application.
  */
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
-public class PackageRuleTest {
+public class PackageRule {
 
   /* ArchRule and Condition */
-  public static ArchRule shouldHaveValidLayers = classes().should(containsValidPackageStructureCondition());
+  static ArchRule shouldHaveValidLayers() {
+    return classes().should(containsValidPackageStructureCondition());
+  }
 
   private static ArchCondition<JavaClass> containsValidPackageStructureCondition() {
 

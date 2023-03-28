@@ -42,7 +42,7 @@ public class ArchitectureTest {
 
   // Layer rules test
   @ArchTest
-  private static final ArchRule LAYER_RULES = LayerRules.shouldOnlyAccessValidLayers();
+  private static final ArchRule LAYER_DEPENDENCY_RULES = LayerRules.shouldOnlyAccessValidLayers();
 
   // Naming conventions test
   @ArchTest
@@ -70,12 +70,11 @@ public class ArchitectureTest {
   private static final ArchRule NAMING_CONVENTION_UC_RULE = NamingConventionRules.namingConventionUcCheck();
 
   // Package Rules
+  @ArchTest
+  private static final ArchRule VALID_PACKAGES_RULE = PackageRule.shouldHaveValidLayers();
+
+  // Security Rules
   /*
-   * @ArchTest
-   * private final ArchRule packageRule = PackageRuleTest.shouldHaveValidLayers;
-   * 
-   * // Security Rules
-   * 
    * @ArchTest
    * private final ArchRule security1 = SecurityTest.shouldBeProperlyAnnotated;
    * 
