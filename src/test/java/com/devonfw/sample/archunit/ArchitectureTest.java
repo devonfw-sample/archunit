@@ -45,37 +45,32 @@ public class ArchitectureTest {
   private static final ArchRule LAYER_RULES = LayerRules.shouldOnlyAccessValidLayers();
 
   // Naming conventions test
-  // @ArchTest
-  // private final ArchRule n1 =
-  // NamingConventionTest.N1DevonNamingConventionCtoCheck;
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_CTO_RULE = NamingConventionRules.namingConventionCtoCheck();
 
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_ENTITY_RULE = NamingConventionRules.namingConventionEntityCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_ETO_RULE = NamingConventionRules.namingConventionEtoCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_ABSTRACT_UC_RULE = NamingConventionRules.abstractUcCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_MAPPER_RULE = NamingConventionRules.mapperCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_PATH_RULE = NamingConventionRules.pathCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_JPA_REPOSITORY_RULE = NamingConventionRules.jpaRepositoryCheck();
+
+  @ArchTest
+  private static final ArchRule NAMING_CONVENTION_UC_RULE = NamingConventionRules.namingConventionUcCheck();
+
+  // Package Rules
   /*
-   * @ArchTest
-   * private final ArchRule n2 =
-   * NamingConventionTest.N3DevonNamingConventionEntityCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n3 =
-   * NamingConventionTest.N4DevonNamingConventionEtoCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n4 = NamingConventionTest.DevonAbstractUcCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n5 = NamingConventionTest.DevonMapperCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n6 = NamingConventionTest.DevonPathCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n7 = NamingConventionTest.DevonJpaRepositoryCheck;
-   * 
-   * @ArchTest
-   * private final ArchRule n8 =
-   * NamingConventionTest.N5DevonNamingConventionUcCheck;
-   * 
-   * // Package Rules
-   * 
    * @ArchTest
    * private final ArchRule packageRule = PackageRuleTest.shouldHaveValidLayers;
    * 
