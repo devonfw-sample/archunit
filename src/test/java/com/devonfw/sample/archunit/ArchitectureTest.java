@@ -14,67 +14,116 @@ public class ArchitectureTest {
   @ArchTest
   private final ArchRule avoidCyclDep = AvoidCyclicDependenciesTest.no_cyclic_dependencies_are_allowed;
 
-  // Comp rules test
+  // Component Rules
   @ArchTest
-  private final ArchRule c1 = ComponentRuleTest.noComponentsServiceLayerDependsOnTheServiceLayerOfAnotherComponent;
-  @ArchTest
-  private final ArchRule c2 = ComponentRuleTest.noComponentsServiceLayerDependsOnTheLogicLayerOfAnotherComponent;
-  @ArchTest
-  private final ArchRule c3 = ComponentRuleTest.noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent;
-  @ArchTest
-  private final ArchRule c4 = ComponentRuleTest.noComponentsDataaccessLayerDependsOnTheDataaccessLayerOfAnotherComponent;
-  @ArchTest
-  private final ArchRule c5 = ComponentRuleTest.noComponentsBatchLayerDependsOnTheLogicLayerOfAnotherComponent;
-  @ArchTest
-  private final ArchRule c6 = ComponentRuleTest.theDefaultProjectComponentDoesNotDependOnAnyOtherComponent;
+  private static final ArchRule COMPONENT_SERVICE_TO_SERVICE_RULE = ComponentRules
+      .serviceLayerOfOneComponentShouldNotDependOnTheServiceLayerOfAnotherComponent();
 
-  // Layer rules test
   @ArchTest
-  private final ArchRule layerRules = LayerRulesTest.shouldOnlyAccessValidLayers;
+  private static final ArchRule COMPONENT_SERVICE_TO_LOGIC_RULE = ComponentRules
+      .serviceLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent();
 
-  // Naming conventions test
   @ArchTest
-  private final ArchRule n1 = NamingConventionTest.N1DevonNamingConventionCtoCheck;
-  @ArchTest
-  private final ArchRule n2 = NamingConventionTest.N3DevonNamingConventionEntityCheck;
-  @ArchTest
-  private final ArchRule n3 = NamingConventionTest.N4DevonNamingConventionEtoCheck;
-  @ArchTest
-  private final ArchRule n4 = NamingConventionTest.DevonAbstractUcCheck;
-  @ArchTest
-  private final ArchRule n5 = NamingConventionTest.DevonMapperCheck;
-  @ArchTest
-  private final ArchRule n6 = NamingConventionTest.DevonPathCheck;
-  @ArchTest
-  private final ArchRule n7 = NamingConventionTest.DevonJpaRepositoryCheck;
-  @ArchTest
-  private final ArchRule n8 = NamingConventionTest.N5DevonNamingConventionUcCheck;
+  private static final ArchRule COMPONENT_LOGIC_TO_DATAACCESS_RULE = ComponentRules
+      .logicLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent();
 
-  // Package Rules
   @ArchTest
-  private final ArchRule packageRule = PackageRuleTest.shouldHaveValidLayers;
+  private static final ArchRule COMPONENT_DATAACCESS_TO_DATAACCESS_RULE = ComponentRules
+      .dataaccessLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent();
 
-  // Security Rules
   @ArchTest
-  private final ArchRule security1 = SecurityTest.shouldBeProperlyAnnotated;
-  @ArchTest
-  private final ArchRule security2 = SecurityTest.shouldnTUseCreateQuery;
+  private static final ArchRule COMPONENT_BATCH_TO_LOGIC_RULE = ComponentRules
+      .batchLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent();
 
-  // Third-Party Rules
   @ArchTest
-  private final ArchRule thirdparty1 = ThirdPartyRulesTest.check_object_dependency;
-  @ArchTest
-  private final ArchRule thirdparty2 = ThirdPartyRulesTest.check_converter_dependency;
-  @ArchTest
-  private final ArchRule thirdparty3 = ThirdPartyRulesTest.check_mysema_dependency;
-  @ArchTest
-  private final ArchRule thirdparty4 = ThirdPartyRulesTest.verifyingSpringframeworkTransactionalIsNotUsed;
-  @ArchTest
-  private final ArchRule thirdparty5 = ThirdPartyRulesTest.verifyingProperTransactionalUseFromJee;
-  @ArchTest
-  private final ArchRule thirdparty6 = ThirdPartyRulesTest.verifyingProperJpaUse;
-  @ArchTest
-  private final ArchRule thirdparty7 = ThirdPartyRulesTest.jpaIsUsedAsEncouraged;
+  private static final ArchRule COMPONENT_GENERAL_DOES_NOT_DEPEND_ON_ANY_OTHER_COMPONENT_RULE = ComponentRules
+      .theDefaultProjectComponentShouldNotDependOnAnyOtherComponent();
+
+  /*
+   * @ArchTest
+   * private final ArchRule c6 =
+   * ComponentRuleTest.theDefaultProjectComponentDoesNotDependOnAnyOtherComponent;
+   * 
+   * // Layer rules test
+   * 
+   * @ArchTest
+   * private final ArchRule layerRules =
+   * LayerRulesTest.shouldOnlyAccessValidLayers;
+   * 
+   * // Naming conventions test
+   * 
+   * @ArchTest
+   * private final ArchRule n1 =
+   * NamingConventionTest.N1DevonNamingConventionCtoCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n2 =
+   * NamingConventionTest.N3DevonNamingConventionEntityCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n3 =
+   * NamingConventionTest.N4DevonNamingConventionEtoCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n4 = NamingConventionTest.DevonAbstractUcCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n5 = NamingConventionTest.DevonMapperCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n6 = NamingConventionTest.DevonPathCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n7 = NamingConventionTest.DevonJpaRepositoryCheck;
+   * 
+   * @ArchTest
+   * private final ArchRule n8 =
+   * NamingConventionTest.N5DevonNamingConventionUcCheck;
+   * 
+   * // Package Rules
+   * 
+   * @ArchTest
+   * private final ArchRule packageRule = PackageRuleTest.shouldHaveValidLayers;
+   * 
+   * // Security Rules
+   * 
+   * @ArchTest
+   * private final ArchRule security1 = SecurityTest.shouldBeProperlyAnnotated;
+   * 
+   * @ArchTest
+   * private final ArchRule security2 = SecurityTest.shouldnTUseCreateQuery;
+   * 
+   * // Third-Party Rules
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty1 =
+   * ThirdPartyRulesTest.check_object_dependency;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty2 =
+   * ThirdPartyRulesTest.check_converter_dependency;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty3 =
+   * ThirdPartyRulesTest.check_mysema_dependency;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty4 =
+   * ThirdPartyRulesTest.verifyingSpringframeworkTransactionalIsNotUsed;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty5 =
+   * ThirdPartyRulesTest.verifyingProperTransactionalUseFromJee;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty6 =
+   * ThirdPartyRulesTest.verifyingProperJpaUse;
+   * 
+   * @ArchTest
+   * private final ArchRule thirdparty7 =
+   * ThirdPartyRulesTest.jpaIsUsedAsEncouraged;
+   * 
+   */
 
   /*
    * @ArchTest

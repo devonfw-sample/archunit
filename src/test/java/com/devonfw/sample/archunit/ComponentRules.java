@@ -10,7 +10,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
-public class ComponentRuleTest {
+public class ComponentRules {
 
   private static DescribedPredicate<JavaClass> resideInServiceLayerOfAComponent = new DescribedPredicate<JavaClass>(
       "lie inside the service layer of a custom component different from the business architectures default general component") {
@@ -71,7 +71,7 @@ public class ComponentRuleTest {
     }
   };
 
-  public static final ArchCondition<JavaClass> dependOnDiffCustomComponents = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> dependOnDiffCustomComponents = new ArchCondition<JavaClass>(
       "depend on a different custom component") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
@@ -93,7 +93,7 @@ public class ComponentRuleTest {
     }
   };
 
-  public static final ArchCondition<JavaClass> dependOnDiffComponentsServiceLayerClasses = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> dependOnDiffComponentsServiceLayerClasses = new ArchCondition<JavaClass>(
       "depend on the service layer of a different custom component") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
@@ -115,7 +115,7 @@ public class ComponentRuleTest {
     }
   };
 
-  public static final ArchCondition<JavaClass> dependOnDiffComponentsLogicLayer = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> dependOnDiffComponentsLogicLayer = new ArchCondition<JavaClass>(
       "depend on the logic layer of a different custom component") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
@@ -137,7 +137,7 @@ public class ComponentRuleTest {
     }
   };
 
-  public static final ArchCondition<JavaClass> dependOnDiffComponentsDataaccessLayer = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> dependOnDiffComponentsDataaccessLayer = new ArchCondition<JavaClass>(
       "depend on the dataacces layer of a different custom component") {
     @Override
     public void check(JavaClass sourceClass, ConditionEvents events) {
@@ -161,53 +161,71 @@ public class ComponentRuleTest {
   };
 
   /**
-   * verifying that the service layer of one component does not depend on the service layer of another component.
+   * verifying that the service layer of one component does not depend on the
+   * service layer of another component.
    */
-  public static final ArchRule noComponentsServiceLayerDependsOnTheServiceLayerOfAnotherComponent = noClasses()
-      .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsServiceLayerClasses)
-      .as("Code from service layer of a component shall not depend on service layer of a different component.")
-      .allowEmptyShould(true);
+  static ArchRule serviceLayerOfOneComponentShouldNotDependOnTheServiceLayerOfAnotherComponent() {
+    return noClasses()
+        .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsServiceLayerClasses)
+        .as("Code from service layer of a component shall not depend on service layer of a different component.")
+        .allowEmptyShould(true);
+  }
 
   /**
-   * verifying that the service layer of one component does not depend on the logic layer of another component.
+   * verifying that the service layer of one component does not depend on the
+   * logic layer of another component.
    */
-  public static final ArchRule noComponentsServiceLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
-      .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
-      .as("Code from service layer of a component shall not depend on logic layer of a different component.")
-      .allowEmptyShould(true);
+  static ArchRule serviceLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent() {
+    return noClasses()
+        .that(resideInServiceLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
+        .as("Code from service layer of a component shall not depend on logic layer of a different component.")
+        .allowEmptyShould(true);
+  }
 
   /**
-   * verifying that the logic layer of a component may not depend on the dataaccess layer of another component.
+   * verifying that the logic layer of a component may not depend on the
+   * dataaccess layer of another component.
    */
-  public static final ArchRule noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
-      .that(resideInLogicLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
-      .as("Code from logic layer of a component shall not depend on dataaccess layer of a different component.")
-      .allowEmptyShould(true);
+  static ArchRule logicLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent() {
+    return noClasses()
+        .that(resideInLogicLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
+        .as("Code from logic layer of a component shall not depend on dataaccess layer of a different component.")
+        .allowEmptyShould(true);
+  }
 
   // medium severity
   /**
-   * verifying that the dataaccess layer of one component does not depend on the dataaccess layer of another component.
+   * verifying that the dataaccess layer of one component does not depend on the
+   * dataaccess layer of another component.
    */
-  public static final ArchRule noComponentsDataaccessLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
-      .that(resideInDataaccessLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
-      .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component.")
-      .allowEmptyShould(true);
+  static ArchRule dataaccessLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent() {
+    return noClasses()
+        .that(resideInDataaccessLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
+        .as("Code from dataaccess layer shall not depend on dataaccess layer of a different component.")
+        .allowEmptyShould(true);
+  }
 
   /**
-   * verifying that the batch layer of a component may not depend on the logic layer of another component.
+   * verifying that the batch layer of a component may not depend on the logic
+   * layer of another component.
    */
-  public static final ArchRule noComponentsBatchLayerDependsOnTheLogicLayerOfAnotherComponent = noClasses()
-      .that(resideInBatchLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
-      .as("Code from batch layer of a component shall not depend on logic layer of a different component.")
-      .allowEmptyShould(true);
+  static ArchRule batchLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent() {
+    return noClasses()
+        .that(resideInBatchLayerOfAComponent).should(dependOnDiffComponentsLogicLayer)
+        .as("Code from batch layer of a component shall not depend on logic layer of a different component.")
+        .allowEmptyShould(true);
+  }
 
   /**
-   * verifying that the business architectures default general component does not depend on any other component.
+   * verifying that the business architectures default general component does not
+   * depend on any other component.
    */
-  public static ArchRule theDefaultProjectComponentDoesNotDependOnAnyOtherComponent = noClasses()
-      .that(resideInTheGeneralProjectComponent).should(dependOnDiffCustomComponents)
-      .as("Code from the business architecture general component must not depend on any other component.")
-      .allowEmptyShould(true);
+  static ArchRule theDefaultProjectComponentShouldNotDependOnAnyOtherComponent() {
+    return noClasses()
+        .that(resideInTheGeneralProjectComponent).should(dependOnDiffCustomComponents)
+        .as("Code from the business architecture general component must not depend on any other component.")
+        .allowEmptyShould(true);
+  }
 
   private static boolean isDependingOnAnotherCustomComponent(PackageStructure sourcePkg, PackageStructure targetPkg) {
 
@@ -249,13 +267,16 @@ public class ComponentRuleTest {
   }
 
   /**
-   * Check whether the given PackageStructures do not share the same component name and if the target package is not the
+   * Check whether the given PackageStructures do not share the same component
+   * name and if the target package is not the
    * default component.
    *
    * @param sourcePkg
    * @param targetPkg
-   * @return Return {@code true} if the given {@code targetPkg} is not the default {@link PackageStructure} "general"
-   *         component and both of the parameters do not belong to the same component. Otherwise, return {@code false}.
+   * @return Return {@code true} if the given {@code targetPkg} is not the default
+   *         {@link PackageStructure} "general"
+   *         component and both of the parameters do not belong to the same
+   *         component. Otherwise, return {@code false}.
    */
   private static boolean isDifferentCustomComponent(PackageStructure sourcePkg, PackageStructure targetPkg) {
 
@@ -271,4 +292,5 @@ public class ComponentRuleTest {
         targetClass.getDescription());
     return violationMessage;
   }
+
 }
