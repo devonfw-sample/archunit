@@ -8,15 +8,12 @@ import java.util.Set;
 
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
-@AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
-public class ThirdPartyRulesTest {
+public class ThirdPartyRules {
   private static final Set<String> DISCOURAGED_HIBERNATE_ANNOTATIONS = new HashSet<>(
       Arrays.asList("OrderBy", "Entity", "AccessType", "ForeignKey", "Cascade", "Index", "IndexColumn"));
 
@@ -26,18 +23,24 @@ public class ThirdPartyRulesTest {
 
   private static final String ORG_HIBERNATE_ANNOTATIONS = "org.hibernate.annotations";
 
-  public static ArchRule check_object_dependency = noClasses().should().dependOnClassesThat()
-      .haveFullyQualifiedName("com.google.common.base.Objects")
-      .because("Use Java standards instead (java.util.Objects).");
+  static ArchRule checkObjectDependency() {
+    return noClasses().should().dependOnClassesThat()
+        .haveFullyQualifiedName("com.google.common.base.Objects")
+        .because("Use Java standards instead (java.util.Objects).");
+  }
 
-  public static ArchRule check_converter_dependency = noClasses().should().dependOnClassesThat()
-      .haveFullyQualifiedName("javax.persistence.Convert")
-      .because("Use the javax.persistence.Converter annotation on a custom converter"
-          + " which implements the javax.persistence.AttributeConverter instead of the 'javax.persistance.Convert' annotation");
+  static ArchRule checkConverterDependency() {
+    return noClasses().should().dependOnClassesThat()
+        .haveFullyQualifiedName("javax.persistence.Convert")
+        .because("Use the javax.persistence.Converter annotation on a custom converter"
+            + " which implements the javax.persistence.AttributeConverter instead of the 'javax.persistance.Convert' annotation");
+  }
 
-  public static ArchRule check_mysema_dependency = noClasses().should().dependOnClassesThat()
-      .resideInAPackage("com.mysema.query..")
-      .because("Use official QueryDSL (com.querydsl.* e.g. from com.querydsl:querydsl-jpa).");
+  static ArchRule checkMysemaDependency() {
+    return noClasses().should().dependOnClassesThat()
+        .resideInAPackage("com.mysema.query..")
+        .because("Use official QueryDSL (com.querydsl.* e.g. from com.querydsl:querydsl-jpa).");
+  }
 
   private static boolean isApiScopedClassUsingTransactional(JavaClass source, String targetPackageFullName) {
 
@@ -49,7 +52,7 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  public static ArchCondition<JavaClass> verifyingTransactionalAnnotationIsNotUsedInsideApi = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> verifyingTransactionalAnnotationIsNotUsedInsideApi = new ArchCondition<JavaClass>(
       "use @Transactional in API") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
@@ -58,7 +61,8 @@ public class ThirdPartyRulesTest {
         String targetFullName = dependency.getTargetClass().getFullName();
         String targetClassDescription = dependency.getDescription();
         /*
-         * In case the project has a classic architecture using scopes, check that no API scoped class is using
+         * In case the project has a classic architecture using scopes, check that no
+         * API scoped class is using
          * 'javax.transaction.Transactional'
          */
         if (isApiScopedClassUsingTransactional(source, targetFullName) == true) {
@@ -71,12 +75,17 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  public static ArchRule verifyingSpringframeworkTransactionalIsNotUsed = noClasses().should().dependOnClassesThat()
-      .haveFullyQualifiedName("org.springframework.transaction.annotation.Transactional")
-      .because("Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+).");
+  static ArchRule verifyingSpringframeworkTransactionalIsNotUsed() {
+    return noClasses().should().dependOnClassesThat()
+        .haveFullyQualifiedName("org.springframework.transaction.annotation.Transactional")
+        .because(
+            "Use JEE standard (javax.transaction.Transactional from javax.transaction:javax.transaction-api:1.2+).");
+  }
 
-  public static ArchRule verifyingProperTransactionalUseFromJee = noClasses()
-      .should(verifyingTransactionalAnnotationIsNotUsedInsideApi).allowEmptyShould(true);
+  static ArchRule verifyingProperTransactionalUseFromJee() {
+    return noClasses()
+        .should(verifyingTransactionalAnnotationIsNotUsedInsideApi).allowEmptyShould(true);
+  }
 
   private static boolean isUsingJavaxPersistenceDataAccessOrEmbeddablesInCommon(JavaClass source,
       String targetPackageFullName) {
@@ -94,7 +103,7 @@ public class ThirdPartyRulesTest {
     return true;
   }
 
-  public static final ArchCondition<JavaClass> misuse_jpa = new ArchCondition<JavaClass>(
+  private static ArchCondition<JavaClass> jpaUsedOutsideOfDataaccessLayerOrEmbeddablesInCommonLayer = new ArchCondition<JavaClass>(
       "use JPA outside of dataaccess layer or embeddables in common layer") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
@@ -112,7 +121,9 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  public static final ArchRule verifyingProperJpaUse = noClasses().should(misuse_jpa).allowEmptyShould(true);
+  static ArchRule verifyingJpaUseInCompliantLayers() {
+    return noClasses().should(jpaUsedOutsideOfDataaccessLayerOrEmbeddablesInCommonLayer).allowEmptyShould(true);
+  }
 
   private static boolean isUsingHibernateOutsideOfDataaccessLayer(JavaClass source) {
 
@@ -168,7 +179,7 @@ public class ThirdPartyRulesTest {
     return false;
   }
 
-  public static final ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass>("misuse hibernate") {
+  private static ArchCondition<JavaClass> misUseHibernate = new ArchCondition<JavaClass>("misuse hibernate") {
     @Override
     public void check(JavaClass source, ConditionEvents events) {
 
@@ -197,8 +208,10 @@ public class ThirdPartyRulesTest {
             events.add(new SimpleConditionEvent(source, true, message));
           }
           /*
-           * In case the project has a classic architecture that uses scopes, check that Hibernate.Envers are only
-           * utilized inside the impl scope of the dataaccess layer. In addition, Hibernate internals also need to be
+           * In case the project has a classic architecture that uses scopes, check that
+           * Hibernate.Envers are only
+           * utilized inside the impl scope of the dataaccess layer. In addition,
+           * Hibernate internals also need to be
            * used inside the impl scope of the dataaccess layer.
            */
           if (isNotImplementingHibernateEnversInImplScope(source, targetClass) == true) {
@@ -218,5 +231,7 @@ public class ThirdPartyRulesTest {
     }
   };
 
-  public static final ArchRule jpaIsUsedAsEncouraged = noClasses().should(misUseHibernate).allowEmptyShould(true);
+  static ArchRule jpaIsUsedAsEncouraged() {
+    return noClasses().should(misUseHibernate).allowEmptyShould(true);
+  }
 }

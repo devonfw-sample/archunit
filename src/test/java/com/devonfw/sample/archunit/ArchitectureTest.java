@@ -12,104 +12,97 @@ import com.tngtech.archunit.lang.ArchRule;
 public class ArchitectureTest {
 
   @ArchTest
-  private static final ArchRule AVOID_CYCLIC_DEPENDENCIES_RULE = CyclicDependenciesRules
+  private final ArchRule avoidCyclicDependenciesRule = CyclicDependenciesRules
       .cyclicDependenciesAreNotAllowed();
 
   // Component Rules
   @ArchTest
-  private static final ArchRule COMPONENT_SERVICE_TO_SERVICE_RULE = ComponentRules
+  private final ArchRule componentServiceToServiceRule = ComponentRules
       .serviceLayerOfOneComponentShouldNotDependOnTheServiceLayerOfAnotherComponent();
 
   @ArchTest
-  private static final ArchRule COMPONENT_SERVICE_TO_LOGIC_RULE = ComponentRules
+  private final ArchRule componentServiceToLogicRule = ComponentRules
       .serviceLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent();
 
   @ArchTest
-  private static final ArchRule COMPONENT_LOGIC_TO_DATAACCESS_RULE = ComponentRules
+  private final ArchRule componentLogicToDataaccessRule = ComponentRules
       .logicLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent();
 
   @ArchTest
-  private static final ArchRule COMPONENT_DATAACCESS_TO_DATAACCESS_RULE = ComponentRules
+  private final ArchRule componentDataaccessToDataaccessRule = ComponentRules
       .dataaccessLayerOfOneComponentShouldNotDependOnTheDataaccessLayerOfAnotherComponent();
 
   @ArchTest
-  private static final ArchRule COMPONENT_BATCH_TO_LOGIC_RULE = ComponentRules
+  private final ArchRule componentBatchToLogicRule = ComponentRules
       .batchLayerOfOneComponentShouldNotDependOnTheLogicLayerOfAnotherComponent();
 
   @ArchTest
-  private static final ArchRule COMPONENT_GENERAL_DOES_NOT_DEPEND_ON_ANY_OTHER_COMPONENT_RULE = ComponentRules
+  private final ArchRule componentGeneralDoesNotDependOnAnyOtherComponentRule = ComponentRules
       .theDefaultProjectComponentShouldNotDependOnAnyOtherComponent();
 
   // Layer rules test
   @ArchTest
-  private static final ArchRule LAYER_DEPENDENCY_RULES = LayerRules.shouldOnlyAccessValidLayers();
+  private final ArchRule layerDependencyRule = LayerRules.shouldOnlyAccessValidLayers();
 
   // Naming conventions test
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_CTO_RULE = NamingConventionRules.namingConventionCtoCheck();
+  private final ArchRule namingConventionCtoRule = NamingConventionRules.namingConventionCtoCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_ENTITY_RULE = NamingConventionRules.namingConventionEntityCheck();
+  private final ArchRule namingConventionEntityRule = NamingConventionRules.namingConventionEntityCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_ETO_RULE = NamingConventionRules.namingConventionEtoCheck();
+  private final ArchRule namingConventionEtoRule = NamingConventionRules.namingConventionEtoCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_ABSTRACT_UC_RULE = NamingConventionRules.abstractUcCheck();
+  private final ArchRule namingConventionAbstractUcRule = NamingConventionRules.abstractUcCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_MAPPER_RULE = NamingConventionRules.mapperCheck();
+  private final ArchRule namingConventionMapperRule = NamingConventionRules.mapperCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_PATH_RULE = NamingConventionRules.pathCheck();
+  private final ArchRule namingConventionPathRule = NamingConventionRules.pathCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_JPA_REPOSITORY_RULE = NamingConventionRules.jpaRepositoryCheck();
+  private final ArchRule namingConventionJpaRepositoryRule = NamingConventionRules.jpaRepositoryCheck();
 
   @ArchTest
-  private static final ArchRule NAMING_CONVENTION_UC_RULE = NamingConventionRules.namingConventionUcCheck();
+  private final ArchRule namingConventionUcRule = NamingConventionRules.namingConventionUcCheck();
 
   // Package Rules
   @ArchTest
-  private static final ArchRule VALID_PACKAGES_RULE = PackageRule.shouldHaveValidLayers();
+  private final ArchRule validPackagesRule = PackageRule.shouldHaveValidLayers();
 
   // Security Rules
   @ArchTest
-  private static final ArchRule SECURITY_PROPER_ANNOTATION_RULE = SecurityRules.shouldBeProperlyAnnotated();
+  private final ArchRule securityProperAnnotationRule = SecurityRules.shouldBeProperlyAnnotated();
 
   @ArchTest
-  private static final ArchRule SECURITY_AVOID_CREATE_QUERY_RULE = SecurityRules.shouldntUseCreateQuery();
+  private final ArchRule securityAvoidCreateQueryRule = SecurityRules.shouldntUseCreateQuery();
 
   // Third-Party Rules
-  /*
-   * @ArchTest
-   * private final ArchRule thirdparty1 =
-   * ThirdPartyRulesTest.check_object_dependency;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty2 =
-   * ThirdPartyRulesTest.check_converter_dependency;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty3 =
-   * ThirdPartyRulesTest.check_mysema_dependency;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty4 =
-   * ThirdPartyRulesTest.verifyingSpringframeworkTransactionalIsNotUsed;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty5 =
-   * ThirdPartyRulesTest.verifyingProperTransactionalUseFromJee;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty6 =
-   * ThirdPartyRulesTest.verifyingProperJpaUse;
-   * 
-   * @ArchTest
-   * private final ArchRule thirdparty7 =
-   * ThirdPartyRulesTest.jpaIsUsedAsEncouraged;
-   * 
-   */
+  @ArchTest
+  private final ArchRule thirdpartyCheckObjectDependencyRule = ThirdPartyRules.checkObjectDependency();
+
+  @ArchTest
+  private final ArchRule thirdpartyCheckConverterDependencyRule = ThirdPartyRules.checkConverterDependency();
+
+  @ArchTest
+  private final ArchRule thirdpartyCheckMysemaDependencyRule = ThirdPartyRules.checkMysemaDependency();
+
+  @ArchTest
+  private final ArchRule thirdpartyAvoidSpringframeworkTransactionalRule = ThirdPartyRules
+      .verifyingSpringframeworkTransactionalIsNotUsed();
+
+  @ArchTest
+  private final ArchRule thirdpartyAvoidTransactionalUseInsideApi = ThirdPartyRules
+      .verifyingProperTransactionalUseFromJee();
+
+  @ArchTest
+  private final ArchRule thirdpartyAvoidJpaUseOutsideOfDataaccessOrEmbeddablesInCommonLayer = ThirdPartyRules
+      .verifyingJpaUseInCompliantLayers();
+
+  @ArchTest
+  private final ArchRule thirdpartyAvoidMisuseOfHibernate = ThirdPartyRules.jpaIsUsedAsEncouraged();
 
 }
