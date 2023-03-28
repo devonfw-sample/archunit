@@ -12,7 +12,8 @@ import com.tngtech.archunit.lang.ArchRule;
 public class ArchitectureTest {
 
   @ArchTest
-  private final ArchRule avoidCyclDep = AvoidCyclicDependenciesTest.no_cyclic_dependencies_are_allowed;
+  private static final ArchRule AVOID_CYCLIC_DEPENDENCIES_RULE = CyclicDependenciesRules
+      .cyclicDependenciesAreNotAllowed();
 
   // Component Rules
   @ArchTest
