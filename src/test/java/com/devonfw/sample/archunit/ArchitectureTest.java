@@ -74,15 +74,14 @@ public class ArchitectureTest {
   private static final ArchRule VALID_PACKAGES_RULE = PackageRule.shouldHaveValidLayers();
 
   // Security Rules
+  @ArchTest
+  private static final ArchRule SECURITY_PROPER_ANNOTATION_RULE = SecurityRules.shouldBeProperlyAnnotated();
+
+  @ArchTest
+  private static final ArchRule SECURITY_AVOID_CREATE_QUERY_RULE = SecurityRules.shouldntUseCreateQuery();
+
+  // Third-Party Rules
   /*
-   * @ArchTest
-   * private final ArchRule security1 = SecurityTest.shouldBeProperlyAnnotated;
-   * 
-   * @ArchTest
-   * private final ArchRule security2 = SecurityTest.shouldnTUseCreateQuery;
-   * 
-   * // Third-Party Rules
-   * 
    * @ArchTest
    * private final ArchRule thirdparty1 =
    * ThirdPartyRulesTest.check_object_dependency;
@@ -113,30 +112,4 @@ public class ArchitectureTest {
    * 
    */
 
-  /*
-   * @ArchTest
-   * private final ArchTests CYCLIC_DEPENDENCIES_TEST =
-   * ArchTests.in(AvoidCyclicDependenciesTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests COMPONENT_RULES =
-   * ArchTests.in(ComponentRuleTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests LAYER_RULES = ArchTests.in(LayerRulesTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests NAMING_CONVENTION_RULES =
-   * ArchTests.in(NamingConventionTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests PACKAGE_RULES = ArchTests.in(PackageRuleTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests SECURITY_RULES = ArchTests.in(SecurityTest.class);
-   * 
-   * @ArchTest
-   * private final ArchTests THIRD_PARTY_RULES =
-   * ArchTests.in(ThirdPartyRulesTest.class);
-   */
 }
