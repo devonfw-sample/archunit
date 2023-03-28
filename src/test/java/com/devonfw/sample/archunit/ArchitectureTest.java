@@ -40,23 +40,16 @@ public class ArchitectureTest {
   private static final ArchRule COMPONENT_GENERAL_DOES_NOT_DEPEND_ON_ANY_OTHER_COMPONENT_RULE = ComponentRules
       .theDefaultProjectComponentShouldNotDependOnAnyOtherComponent();
 
+  // Layer rules test
+  @ArchTest
+  private static final ArchRule LAYER_RULES = LayerRules.shouldOnlyAccessValidLayers();
+
+  // Naming conventions test
+  // @ArchTest
+  // private final ArchRule n1 =
+  // NamingConventionTest.N1DevonNamingConventionCtoCheck;
+
   /*
-   * @ArchTest
-   * private final ArchRule c6 =
-   * ComponentRuleTest.theDefaultProjectComponentDoesNotDependOnAnyOtherComponent;
-   * 
-   * // Layer rules test
-   * 
-   * @ArchTest
-   * private final ArchRule layerRules =
-   * LayerRulesTest.shouldOnlyAccessValidLayers;
-   * 
-   * // Naming conventions test
-   * 
-   * @ArchTest
-   * private final ArchRule n1 =
-   * NamingConventionTest.N1DevonNamingConventionCtoCheck;
-   * 
    * @ArchTest
    * private final ArchRule n2 =
    * NamingConventionTest.N3DevonNamingConventionEntityCheck;
