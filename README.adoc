@@ -7,12 +7,18 @@ Template of https://github.com/devonfw/java/blob/main/modules/ROOT/pages/archite
 Please note that we assume a classic three-layered archicture as described in the link above.
 However, it is easy to adopt this showcase to other architecture styles like https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)[hexagonal architecture].
 
+== Why does Archunit improve my project?
+
+ArchUnit is a java library which can be easily adopted to the needs of your project. The code is simple to understand through high readability. You can use the given blueprint of the basic devonfw-architecture to specify and add your own architectural rules with only a small or no effort.
+The given blueprint can be adapted to your project through copying the https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[test] folder and adjust the path in the ADD FILE PATH HERE FOR THE NEW PROJECT STRUCTURE.
+
 == Blueprint for architecture validation
 
-Based on ArchUnit we have created a blueprint how to validate a devonfw based architecture that can be found https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[here].
+Based on ArchUnit we have created a blueprint how to validate a devonfw based architecture that can be found https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[here]. The blueprint is based on the https://github.com/devonfw/sonar-devon4j-plugin/blob/master/documentation/rules.asciidoc[sonar-devon-4j-plugin rules].
 You can easily adopt, extend or tweak this to the needs of your project.
 It is meant as a best-practice and starting point for projects that want to introduce ArchUnit but do not have time to walk through the entire https://www.archunit.org/userguide/html/000_Index.html[ArchUnit documentation] and figure out how to properly get everything up and running.
-Once you have such a strating point as template, you can quickly adopt and extend it to your own needs.
+Once you have such a starting point as template, you can quickly adopt and extend it to your own needs based upon this first implementation.
+To make integration as easy as possible we have also documented some [best practices] INSERT LINK BEST PRACTICE.
 
 == Demonstration of violations
 
