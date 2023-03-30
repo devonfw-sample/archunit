@@ -19,16 +19,16 @@ public class PackageRuleTest {
 
   /* ArchRule and Condition */
   @ArchTest
-  public ArchRule shouldHaveValidLayers = priority(Priority.HIGH).classes().should(containsValidPackageStructureCondition());
+  public ArchRule shouldHaveValidLayers = classes().should(containsValidPackageStructureCondition());
 
   private static ArchCondition<JavaClass> containsValidPackageStructureCondition() {
 
-    return new ArchCondition<JavaClass>("check for the package structure to be valid", new Object() {
+    return new ArchCondition<JavaClass>("have a valid package structure according to the devon framework", new Object() {
     }) {
       @Override
       public void check(JavaClass javaClass, ConditionEvents events) {
         PackageStructure packageStructure = PackageStructure.of(javaClass);
-        String message = javaClass.getSimpleName() + " test result is " + packageStructure.isValid();
+        String message = "The Class or Interface named " + javaClass.getSimpleName() + " is violating the package structure.";
         events.add(new SimpleConditionEvent(javaClass, packageStructure.isValid(), message));
       }
     };
