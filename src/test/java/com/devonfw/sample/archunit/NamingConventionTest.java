@@ -66,8 +66,9 @@ public class NamingConventionTest {
               + javaClass.getSimpleName().replace("Eto", "");
           boolean hasCorrectInterface = javaClass.getInterfaces().stream()
               .anyMatch(i -> i.getName().equals(supposedInterfaceName));
-          events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, ""));
-        }
+          String message = "The class or interface named " + javaClass.getSimpleName() + "has not implemented or been implemented by a class or interface with the same simple name";
+          events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
+          }
       }).because(
           "Classes extending AbstractEto must follow the naming convention by ending with 'Eto', reside in package common and implent an interface with the same simple name.");
 
@@ -118,8 +119,10 @@ public class NamingConventionTest {
               String enitiyName = typeArguments[0].getTypeName().replace("Entity", "");
               hasCorrectName = javaClass.getFullName().equals(enitiyName + "Repository");
             }
-          }
-          events.add(new SimpleConditionEvent(javaClass, hasCorrectName, ""));
+          }    
+          String message = "The Class named" + javaClass.getSimpleName() + "does not have the same Simple name as the entity filled in the generic argument of JpaRepository excluding the Entity suffix";
+          events.add(new SimpleConditionEvent(javaClass, hasCorrectName, message));
+        
         }
       });
 
