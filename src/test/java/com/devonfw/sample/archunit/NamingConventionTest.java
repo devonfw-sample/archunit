@@ -66,7 +66,7 @@ public class NamingConventionTest {
               + javaClass.getSimpleName().replace("Eto", "");
           boolean hasCorrectInterface = javaClass.getInterfaces().stream()
               .anyMatch(i -> i.getName().equals(supposedInterfaceName));
-          String message = "The class or interface named " + javaClass.getSimpleName() + "has not implemented or been implemented by a class or interface with the same simple name";
+          String message = "The class or interface named " + javaClass.getSimpleName() + " has not implemented or been implemented by a class or interface with the same simple name";
           events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
           }
       }).because(
@@ -120,7 +120,7 @@ public class NamingConventionTest {
               hasCorrectName = javaClass.getFullName().equals(enitiyName + "Repository");
             }
           }    
-          String message = "The Class named" + javaClass.getSimpleName() + "does not have the same Simple name as the entity filled in the generic argument of JpaRepository excluding the Entity suffix";
+          String message = "The Class named" + javaClass.getSimpleName() + " does not have the same Simple name as the entity filled in the generic argument of JpaRepository excluding the Entity suffix";
           events.add(new SimpleConditionEvent(javaClass, hasCorrectName, message));
         
         }
