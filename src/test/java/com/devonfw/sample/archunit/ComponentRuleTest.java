@@ -1,6 +1,7 @@
 package com.devonfw.sample.archunit;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.priority;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.Dependency;
@@ -11,6 +12,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.Priority;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
@@ -186,7 +188,7 @@ public class ComponentRuleTest {
    * verifying that the logic layer of a component may not depend on the dataaccess layer of another component.
    */
   @ArchTest
-  public static final ArchRule noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent = noClasses()
+  public static final ArchRule noComponentsLogicLayerDependsOnTheDataaccessLayerOfAnotherComponent = priority(Priority.HIGH).noClasses()
       .that(resideInLogicLayerOfAComponent).should(dependOnDiffComponentsDataaccessLayer)
       .as("Code from logic layer of a component shall not depend on dataaccess layer of a different component.")
       .allowEmptyShould(true);
