@@ -9,8 +9,8 @@ However, it is easy to adopt this showcase to other architecture styles like htt
 
 == Why does Archunit improve my project?
 
-ArchUnit is a java library which can be easily adopted to the needs of your project. The code is simple to understand through high readability. You can use the given blueprint of the basic devonfw-architecture to specify and add your own architectural rules with only a small or no effort.
-The given blueprint can be adapted to your project through copying the https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[test] folder and adjust the path in the ADD FILE PATH HERE FOR THE NEW PROJECT STRUCTURE.
+ArchUnit is a java library which can be easily adopted to the needs of your project. The code is simple to understand through high readability. Custom warnings when rules are violated help the developers to understand which architechtural rule has been broken. You can use the given blueprint from this project of the basic devonfw-architecture to specify and add your own architectural rules with only a small or no effort.
+The given blueprint can be adapted to your project through copying the https://github.com/devonfw-sample/archunit/tree/master/src/test/java/com/devonfw/sample/archunit[test] folder, together with the needed imports from the https://github.com/devonfw-sample/archunit/blob/master/pom.xml[pom.xml].
 
 == Blueprint for architecture validation
 
@@ -18,7 +18,7 @@ Based on ArchUnit we have created a blueprint how to validate a devonfw based ar
 You can easily adopt, extend or tweak this to the needs of your project.
 It is meant as a best-practice and starting point for projects that want to introduce ArchUnit but do not have time to walk through the entire https://www.archunit.org/userguide/html/000_Index.html[ArchUnit documentation] and figure out how to properly get everything up and running.
 Once you have such a starting point as template, you can quickly adopt and extend it to your own needs based upon this first implementation.
-To make integration as easy as possible we have also documented some [best practices] INSERT LINK BEST PRACTICE.
+To make integration as easy as possible we have also documented some https://github.com/devonfw-sample/archunit/blob/master/best-practices.adoc[best practices].
 
 == Demonstration of violations
 
