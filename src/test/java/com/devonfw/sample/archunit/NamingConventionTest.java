@@ -66,7 +66,7 @@ public class NamingConventionTest {
               + javaClass.getSimpleName().replace("Eto", "");
           boolean hasCorrectInterface = javaClass.getInterfaces().stream()
               .anyMatch(i -> i.getName().equals(supposedInterfaceName));
-          String message = "The Class named" + javaClass.getSimpleName() + " has failed the test above.";
+          String message = "The Class named " + javaClass.getSimpleName() + " has failed the test above.";
           events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
         }
       }).because(
