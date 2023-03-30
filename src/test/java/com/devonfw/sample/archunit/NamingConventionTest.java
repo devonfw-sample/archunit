@@ -66,8 +66,7 @@ public class NamingConventionTest {
               + javaClass.getSimpleName().replace("Eto", "");
           boolean hasCorrectInterface = javaClass.getInterfaces().stream()
               .anyMatch(i -> i.getName().equals(supposedInterfaceName));
-          String message = "The Class named " + javaClass.getSimpleName() + " has failed the test above.";
-          events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, message));
+          events.add(new SimpleConditionEvent(javaClass, hasCorrectInterface, ""));
         }
       }).because(
           "Classes extending AbstractEto must follow the naming convention by ending with 'Eto', reside in package common and implent an interface with the same simple name.");
@@ -120,7 +119,7 @@ public class NamingConventionTest {
               hasCorrectName = javaClass.getFullName().equals(enitiyName + "Repository");
             }
           }
-          events.add(new SimpleConditionEvent(javaClass, hasCorrectName, "message"));
+          events.add(new SimpleConditionEvent(javaClass, hasCorrectName, ""));
         }
       });
 
