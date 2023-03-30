@@ -47,7 +47,7 @@ public class SecurityTest {
      * Query createNativeQuery(String sqlString, String resultSetMapping)
      */
     @ArchTest
-    private static final ArchRule shouldnTUseCreateQuery = noClasses().should().callMethodWhere(new DescribedPredicate<JavaMethodCall>("test whether CreateQuery or CreateNativQuery is used") {
+    private static final ArchRule shouldnTUseCreateQuery = noClasses().should().callMethodWhere(new DescribedPredicate<JavaMethodCall>("EntityManager.createQuery and EntityManager.createNativeQuery are used with a query given as string, because this can lead to SQL injection vulnerabilities.") {
             @Override
             public boolean test(JavaMethodCall javaMethod) {
                         if(javaMethod.getName().equals("createQuery")){
