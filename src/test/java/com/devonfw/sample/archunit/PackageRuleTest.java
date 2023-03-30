@@ -1,8 +1,5 @@
 package com.devonfw.sample.archunit;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.priority;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -11,6 +8,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.Priority;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 /**
@@ -19,46 +17,9 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 @AnalyzeClasses(packages = "com.devonfw.sample.archunit", importOptions = ImportOption.DoNotIncludeTests.class)
 public class PackageRuleTest {
 
-  /* Layer */
-  private static final String LAYER_COMMON = "common";
-
-  private static final String LAYER_DATA_ACCESS = "dataaccess";
-
-  private static final String LAYER_LOGIC = "logic";
-
-  private static final String LAYER_SERVICE = "service";
-
-  private static final String LAYER_CLIENT = "client";
-
-  private static final String LAYER_BATCH = "batch";
-
-  /* Pattern */
-  private static final String PATTERN_SEGMENT = "[a-z0-9_]+";
-
-  private static final String PATTERN_LAYERS = LAYER_COMMON + "|" + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|"
-      + LAYER_LOGIC + "|" + LAYER_BATCH + "|" + LAYER_CLIENT;
-
-  private static final String ROOT_PACKAGE =
-      // ....1..........................2
-      "(" + PATTERN_SEGMENT + ")(\\." + PATTERN_SEGMENT + ")*";
-
-  private static final String DEFAULT_PATTERN =
-      // ....1......................2...........................3...........................4
-      "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + PATTERN_LAYERS + ")(\\." + PATTERN_SEGMENT + ")*";
-
-  public static final String COMMON_PATTERN =
-      // ....1......................2...........................3...........................4
-      "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + LAYER_COMMON + ")(\\." + PATTERN_SEGMENT + ")*";
-
-  public static final String DATAACCESS_PATTERN =
-      // ....1......................2...........................3...........................4
-      "(" + ROOT_PACKAGE + ")\\.(" + PATTERN_SEGMENT + ")\\.(" + LAYER_DATA_ACCESS + ")(\\." + PATTERN_SEGMENT + ")*";
-
-  private static final Pattern PATTERN = Pattern.compile(DEFAULT_PATTERN);
-
   /* ArchRule and Condition */
   @ArchTest
-  public ArchRule shouldHaveValidLayers = classes().should(containsValidPackageStructureCondition());
+  public ArchRule shouldHaveValidLayers = priority(Priority.HIGH).classes().should(containsValidPackageStructureCondition());
 
   private static ArchCondition<JavaClass> containsValidPackageStructureCondition() {
 
@@ -66,10 +27,9 @@ public class PackageRuleTest {
     }) {
       @Override
       public void check(JavaClass javaClass, ConditionEvents events) {
-
-        Matcher matcher = PATTERN.matcher(javaClass.getPackageName());
-        String message = javaClass.getSimpleName() + " test result is " + matcher.matches();
-        events.add(new SimpleConditionEvent(javaClass, matcher.matches(), message));
+        PackageStructure packageStructure = PackageStructure.of(javaClass);
+        String message = javaClass.getSimpleName() + " test result is " + packageStructure.isValid();
+        events.add(new SimpleConditionEvent(javaClass, packageStructure.isValid(), message));
       }
     };
   };
