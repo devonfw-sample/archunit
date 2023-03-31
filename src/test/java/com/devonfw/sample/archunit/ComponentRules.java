@@ -25,32 +25,32 @@ class ComponentRules extends AbstractRules {
 
   static ArchRule serviceLayerShouldNotDependOnLogicLayerOfAnotherComponent() {
 
-    return priority(Priority.HIGH).noClasses().that(haveServiceLayer()).should(dependOnOtherComponentsLogicLayer())
-        .as("code from service layer of a component shall not depend on logic layer of a different component.").allowEmptyShould(true);
+    return priority(Priority.HIGH).noClasses().that(haveServiceLayer()).should(dependOnOtherComponentsLogicLayer()).allowEmptyShould(true)
+        .because("code from service layer of a component shall not depend on logic layer of a different component.");
   }
 
   static ArchRule logicLayerShouldNotDependOnDataaccessLayerOfAnotherComponent() {
 
-    return priority(Priority.HIGH).noClasses().that(haveLogicLayer()).should(dependOnOtherComponentsDataaccessLayer())
-        .as("code from logic layer shall not depend on dataaccess layer of a different component.").allowEmptyShould(true);
+    return priority(Priority.HIGH).noClasses().that(haveLogicLayer()).should(dependOnOtherComponentsDataaccessLayer()).allowEmptyShould(true)
+        .because("code from logic layer shall not depend on dataaccess layer of a different component.");
   }
 
   static ArchRule dataaccessLayerShouldNotDependOnDataaccessLayerOfAnotherComponent() {
 
-    return priority(Priority.MEDIUM).noClasses().that(haveDataaccessLayer()).should(dependOnOtherComponentsDataaccessLayer())
-        .as("code from dataaccess layer shall not depend on dataaccess layer of a different component.").allowEmptyShould(true);
+    return priority(Priority.MEDIUM).noClasses().that(haveDataaccessLayer()).should(dependOnOtherComponentsDataaccessLayer()).allowEmptyShould(true)
+        .because("code from dataaccess layer shall not depend on dataaccess layer of a different component.");
   }
 
   static ArchRule batchLayerShouldNotDependOnLogicLayerOfAnotherComponent() {
 
-    return priority(Priority.MEDIUM).noClasses().that(haveBatchLayer()).should(dependOnOtherComponentsLogicLayer())
-        .as("Code from batch layer of a component shall not depend on logic layer of a different component.").allowEmptyShould(true);
+    return priority(Priority.MEDIUM).noClasses().that(haveBatchLayer()).should(dependOnOtherComponentsLogicLayer()).allowEmptyShould(true)
+        .because("Code from batch layer of a component shall not depend on logic layer of a different component.");
   }
 
   static ArchRule generalDoesNotDependOnAnotherComponent() {
 
-    return priority(Priority.MEDIUM).noClasses().that(haveGeneralComponent()).should().accessClassesThat(notHaveGeneralComponent())
-        .as("general component must not depend on any other component.").allowEmptyShould(true);
+    return priority(Priority.MEDIUM).noClasses().that(haveGeneralComponent()).should().accessClassesThat(notHaveGeneralComponent()).allowEmptyShould(true)
+        .because("general component must not depend on any other component.");
   }
 
 }
