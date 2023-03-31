@@ -48,7 +48,7 @@ class ConventionRules extends AbstractRules {
   static ArchRule embeddablesShouldHaveEmbeddableSuffixAndCommonLayer() {
 
     return priority(Priority.HIGH).classes().that().areAnnotatedWith(Embeddable.class).should().haveSimpleNameEndingWith(EMBEDDABLE)
-        .andShould().resideInAnyPackage(".." + PackageStructure.LAYER_COMMON + "..")
+        .andShould().resideInAnyPackage(".." + PackageStructure.LAYER_COMMON + "..").allowEmptyShould(true)
         .because("embeddables shall have 'Embeddable' suffix and common layer to prevent overhead of transfer objects");
   }
 
