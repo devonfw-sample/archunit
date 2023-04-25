@@ -6,8 +6,6 @@ import com.devonfw.sample.archunit.general.common.AbstractEto;
 /**
  * {@link ViolationItem} implementation as {@link AbstractEto}.
  */
+ // Violation: ETO for ViolationItem interface shall be named ViolationItemEto
 public class WrongInterfaceViolationEto extends AbstractEto implements ViolationItem {
-   /*
-    * they implement an interface with the same simple-name excluding the Eto suffix
-    */
 }
