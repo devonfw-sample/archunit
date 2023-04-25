@@ -1,4 +1,4 @@
-package com.devonfw.sample.archunitviolations;
+package com.devonfw.sample.archunit.violation.logic;
 
 import com.devonfw.sample.archunit.general.logic.AbstractUc;
 
