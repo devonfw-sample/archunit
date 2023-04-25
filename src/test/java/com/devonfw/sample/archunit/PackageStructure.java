@@ -1,5 +1,6 @@
 package com.devonfw.sample.archunit;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,12 @@ public class PackageStructure {
   /** The {@link #getScope() scope} {@value} */
   public static final String SCOPE_IMPLEMENTATION = "impl";
 
-  public static final String DEFAULT_COMPONENT = "general";
+  /** The {@link #isComponentGeneral() general component}. */
+  public static final String COMPONENT_GENERAL = "general";
+
+  /** {@link Pattern#pattern() Pattern} for valid layers. */
+  public static final String PATTERN_LAYERS = LAYER_COMMON + "|" + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|" + LAYER_BATCH + "|"
+      + LAYER_LOGIC + "|" + LAYER_CLIENT;
 
   private final String packageName;
 
@@ -53,9 +59,6 @@ public class PackageStructure {
   private final String scope;
 
   private final String detail;
-
-  private static final String PATTERN_LAYERS = LAYER_COMMON + "|" + LAYER_DATA_ACCESS + "|" + LAYER_SERVICE + "|"
-      + LAYER_BATCH + "|" + LAYER_LOGIC + "|" + LAYER_CLIENT + "|gui";
 
   private static final String REGEX_SEGMENT = "[a-z][a-zA-Z0-9_]+";
 
@@ -82,17 +85,34 @@ public class PackageStructure {
    * @param scope the {@link #getScope() scope}.
    * @param detail the {@link #getDetail() detail}.
    */
-  public PackageStructure(String packageName, boolean valid, String root, String component, String layer, String scope,
-      String detail) {
+  public PackageStructure(String packageName, boolean valid, String root, String component, String layer, String scope, String detail) {
 
     super();
-    this.packageName = packageName;
     this.valid = valid;
     this.root = root;
     this.component = component;
     this.layer = layer;
     this.scope = scope;
     this.detail = detail;
+    if (packageName == null) {
+      StringBuilder sb = new StringBuilder(48);
+      sb.append(root);
+      sb.append('.');
+      sb.append(component);
+      sb.append('.');
+      sb.append(layer);
+      if (!scope.isEmpty()) {
+        sb.append('.');
+        sb.append(scope);
+      }
+      if (!detail.isEmpty()) {
+        sb.append('.');
+        sb.append(detail);
+      }
+      this.packageName = sb.toString();
+    } else {
+      this.packageName = packageName;
+    }
   }
 
   /**
@@ -155,11 +175,13 @@ public class PackageStructure {
   }
 
   /**
-   * @return {@code true} if this is the default architecture component.
+   * @return {@code true} if this is the "general" component for cross-cutting aspects. It shall never user other
+   *         components but may be used by any other component.
+   * @see #COMPONENT_GENERAL
    */
   public boolean isComponentGeneral() {
 
-    return getComponent().equals(DEFAULT_COMPONENT);
+    return getComponent().equals(COMPONENT_GENERAL);
   }
 
   /**
@@ -285,6 +307,71 @@ public class PackageStructure {
   public boolean hasDetail() {
 
     return !this.detail.isEmpty();
+  }
+
+  /**
+   * @param newRoot the new value of {@link #getRoot()}.
+   * @return a copy of this {@link PackageStructure} with the given {@link #getRoot() root}.
+   */
+  public PackageStructure withRoot(String newRoot) {
+
+    Objects.requireNonNull(newRoot);
+    if (newRoot.equals(this.root)) {
+      return this;
+    }
+    return new PackageStructure(null, this.valid, newRoot, this.component, this.layer, this.scope, this.detail);
+  }
+
+  /**
+   * @param newComponent the new value of {@link #getComponent()}.
+   * @return a copy of this {@link PackageStructure} with the given {@link #getComponent() component}.
+   */
+  public PackageStructure withComponent(String newComponent) {
+
+    Objects.requireNonNull(newComponent);
+    if (newComponent.equals(this.component)) {
+      return this;
+    }
+    return new PackageStructure(null, this.valid, this.root, newComponent, this.layer, this.scope, this.detail);
+  }
+
+  /**
+   * @param newLayer the new value of {@link #getLayer()}.
+   * @return a copy of this {@link PackageStructure} with the given {@link #getLayer() layer}.
+   */
+  public PackageStructure withLayer(String newLayer) {
+
+    Objects.requireNonNull(newLayer);
+    if (newLayer.equals(this.layer)) {
+      return this;
+    }
+    return new PackageStructure(null, this.valid, this.root, this.component, newLayer, this.scope, this.detail);
+  }
+
+  /**
+   * @param newScope the new value of {@link #getScope()}.
+   * @return a copy of this {@link PackageStructure} with the given {@link #getScope() scope}.
+   */
+  public PackageStructure withScope(String newScope) {
+
+    Objects.requireNonNull(newScope);
+    if (newScope.equals(this.scope)) {
+      return this;
+    }
+    return new PackageStructure(null, this.valid, this.root, this.component, this.layer, newScope, this.detail);
+  }
+
+  /**
+   * @param newDetail the new value of {@link #getDetail()}.
+   * @return a copy of this {@link PackageStructure} with the given {@link #getDetail() detail}.
+   */
+  public PackageStructure withDetail(String newDetail) {
+
+    Objects.requireNonNull(newDetail);
+    if (newDetail.equals(this.detail)) {
+      return this;
+    }
+    return new PackageStructure(null, this.valid, this.root, this.component, this.layer, this.scope, newDetail);
   }
 
   @Override
