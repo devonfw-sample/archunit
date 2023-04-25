@@ -1,13 +1,10 @@
-package com.devonfw.sample.archunitviolations;
+package com.devonfw.sample.archunit.task.logic;
 
 import javax.annotation.security.PermitAll;
 
 public class UcY1ViolationImproperSecurityAnnotations {
 
-    /**
-     * Violation:
-     * Public method without proper annotations
-     */
+    // Violation: Public method without proper annotations
     public void someMethodWithViolation() {
         // empty
     }
