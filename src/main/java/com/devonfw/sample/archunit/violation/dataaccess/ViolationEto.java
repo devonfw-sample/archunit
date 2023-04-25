@@ -6,8 +6,6 @@ import com.devonfw.sample.archunit.general.common.AbstractEto;
 /**
  * {@link ViolationItem} implementation as {@link AbstractEto}.
  */
+ // Violation: ETO has to be in common layer.
 public class ViolationEto extends AbstractEto implements ViolationItem {
-   /*
-    * AbstractEto have to be in layer common
-    */
 }
