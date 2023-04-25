@@ -17,5 +17,6 @@ import com.devonfw.sample.archunit.violation.common.ViolationItem;
  */
 @Entity
 @Table(name = "VIOLATION")
+// Violation: Entity has to be named «EntityName»Entity (ViolationItemEntity).
 public class ViolationEntity extends ApplicationPersistenceEntity implements ViolationItem {
 }
