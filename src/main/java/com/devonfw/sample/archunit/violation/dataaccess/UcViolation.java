@@ -12,9 +12,6 @@ import com.devonfw.sample.archunit.general.logic.AbstractUc;
 @ApplicationScoped
 @Named
 @Transactional
+// Violation: Use-case has to be in logic layer.
 public class UcViolation extends AbstractUc {
-
-  /*
-   * AbstractUc have to be in layer logic
-   */
 }
