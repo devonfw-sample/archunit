@@ -1,0 +1,70 @@
+:toc: macro
+toc::[]
+:idprefix:
+:idseparator: -
+
+## Hexagonal Architecture
+The sample app provided in this github repository is using a layered architecture.
+However, if you use hexagonal architecture instead, you can use https://www.archunit.org/userguide/html/000_Index.html#_onion_architecture[onion] instead.
+An example can be found in the https://github.com/TNG/ArchUnit-Examples/blob/main/example-plain/src/test/java/com/tngtech/archunit/exampletest/OnionArchitectureTest.java[official ArchUnit example repository].
+
+## Layered Architecture
+The layered architecture used in this sample app is based on the template of https://github.com/devonfw/java/blob/main/modules/ROOT/pages/architecture/layered_architecture.adoc[devonfw Java architecture].
+It uses a classic three-layered architecture as descibed in the documentation linked above.
+ArchUnit provides the method `layeredArchitecture()` to easily construct rules to enforce a layered architecture.
+An example from this repository can be found https://github.com/devonfw-sample/archunit/blob/master/src/test/java/com/devonfw/sample/archunit/LayerRules.java[here].
+
+## ArchRule
+
+### General
+
+The class `ArchRuleDefinition` provides methods like `classes()`,`noClasses()`, `methods()` to construct an `ArchRule`. Examples can be found in in this https://github.com/devonfw-sample/archunit/blob/f547ddd11e3eabd2437c067a2196a49ef3505904/src/test/java/com/devonfw/sample/archunit/ThirdPartyRules.java#L44-L48[repository] or in the https://github.com/TNG/ArchUnit-Examples/tree/main/example-junit4/src/test/java/com/tngtech/archunit/exampletest/junit4[official example repository of ArchUnit].
+
+### Custom Rules
+
+To implement a custom `ArchRule` `DescribedPredicate` and `ArchCondition` can be used like this: 
+
+`classes that ${PREDICATE} should ${CONDITION}`
+
+The predicate filters a set of classes to verify some condition.
+An example can be found in this https://github.com/devonfw-sample/archunit/blob/master/src/test/java/com/devonfw/sample/archunit/AbstractRules.java#L25-L35[repository].
+
+The ArchCondition checks whether the filtered set satisfies a given condition.
+An example can be found in this https://github.com/devonfw-sample/archunit/blob/master/src/test/java/com/devonfw/sample/archunit/AbstractRules.java#L62-L86[repository].
+
+Further information is available in the https://www.archunit.org/userguide/html/000_Index.html#_creating_custom_rules[official user guide].
+
+### Error Message
+
+Sometimes rules need custom error messages. `because()` and `as()` can be used to modify the output of error messages. Further information can be found in the https://www.archunit.org/userguide/html/000_Index.html#_controlling_the_rule_text[official user guide].
+
+`because("message")` concatenates the fluent API messages utilized by ArchUnit.
+
+For example:
+[,java]
+----
+noClasses()
+      .that(DescribedPredicate("message1"))
+      .should(ArchCondition("message2"))
+      .because("message3")
+----
+
+would result in [red]#'no classes that "message1" should "message2", because "message3"'#.
+
+Using `as("message")` enforces printing only the `message` string.
+
+For example:
+[,java]
+----
+noClasses()
+      .that(DescribedPredicate("message1"))
+      .should(ArchCondition("message2"))
+      .as("message3")
+----
+would result in [red]#'"message3"'#.
+
+### Error Handling
+
+If a rule failed unexpectedly, it might failed to check any classes, as that either means that no classes have been passed to the rule at all or that no classes passed the rule matching the `that()` clause. To allow rules being evaluated without checking any classes you can either use `ArchRule.allowEmptyShould(true)` on a single rule or set the configuration property `archRule.failOnEmptyShould = false` to change the behavior globally. 
+
+Further information can be found in the https://www.archunit.org/userguide/html/000_Index.html#_fail_rules_on_empty_should[official user guide].
