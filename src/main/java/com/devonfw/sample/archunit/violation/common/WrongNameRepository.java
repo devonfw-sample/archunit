@@ -9,10 +9,6 @@ import com.devonfw.sample.archunit.violation.dataaccess.ViolationEntity;
 /**
  * Interface for the {@link JpaRepository} giving database access to {@link ViolationEntity}.
  */
+ // Violation: JpaRepository interface shall be named «EntityName»Repository (ViolationRepository)
 public interface WrongNameRepository extends JpaRepository<ViolationEntity, Long> {
-  /*
-   *  has to be named «EntityName»Repository
-   *  where «EntityName» is the name of the entity filled in 
-   *  the generic argument of JpaRepository excluding the Entity suffix.
-   */
 }
